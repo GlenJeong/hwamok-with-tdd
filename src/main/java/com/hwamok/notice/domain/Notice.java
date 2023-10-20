@@ -21,6 +21,7 @@ public class Notice {
     @Column(length = 10)
     private String title;
 
+    @Column(length = 50)
     private String content;
 
     private Instant createdAt=Instant.now();
@@ -29,10 +30,13 @@ public class Notice {
         // 의미있는 함수를 이용해서 사용 required
         // 검증을 할 때는 긍정문은 값이 있다.
         // 부정문은 값이 null이거나 빈 값
-        // if문이나 true나 false일 때 긍정문으로 사용해서 작성한다.
+        // if문이 true나 false일 때 긍정문으로 사용해서 작성한다.
         // isBlank보단 isNotBlank로 작성해야 한다. 긍정문으로 작성하는 것이 좋다.
+
+        // 도메인 보호 로직 ---> Domain Driven Design DDD의 기본 수칙 중 1개
         Preconditions.require(Strings.isNotBlank(title));
         Preconditions.require(Strings.isNotBlank(content));
+        Preconditions.require(title.length() <= 10 );
 
         this.title = title;
         this.content = content;
