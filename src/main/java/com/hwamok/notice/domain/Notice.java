@@ -13,18 +13,18 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 파라메터가 없는 생성자는 기본 생성자가 public이라 protected로 변경
 public class Notice {
-    //컨트롤 쉽프트 티 누르면 테스트코딩이 자동 완성됨
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //ctrl shift t 누르면 테스트코딩이 자동 완성됨
+    @Id // Pk 지정
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Notice 작성시 자동으로 게시물 번호를 1씩 증가해서 만들어줌
     private Long id;
 
-    @Column(length = 10)
+    @Column(length = 10) // 제목의 길이는 10으로 지정
     private String title;
 
-    @Column(length = 50)
+    @Column(length = 50) // 내용의 길이를 50으로 지정
     private String content;
 
-    private Instant createdAt=Instant.now();
+    private Instant createdAt=Instant.now(); // now() 현재 시간으로 반환,
 
     public Notice(String title, String content) {
         // 의미있는 함수를 이용해서 사용 required

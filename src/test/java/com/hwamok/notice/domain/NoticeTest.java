@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.Instant;
 
@@ -23,6 +22,7 @@ class NoticeTest {
         // 내가 나를 못 믿기 때문에 확인하고 싶어서
         // System.out.println("notice.getContent() = " + notice.getContent());
         // System.out.println("notice.getTitle() = " + notice.getTitle());
+
 
         assertThat(notice.getId()).isNull();
         // Assertions.assertThat(검증을 원하는 값).isEqualTo(기대값)
@@ -45,8 +45,4 @@ class NoticeTest {
                 isThrownBy(()->new Notice("제목", content));
     }
 
-    @Test
-    void 공지사항_생성_실패_제목이_11자_이상() {
-
-    }
 }

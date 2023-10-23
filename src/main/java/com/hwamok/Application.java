@@ -12,11 +12,14 @@ public class Application {
     // 4. Entity 의존성이 제일 없음   --> 비지니스 모델 중심의 개발 --> 도메인 중심 개발
     //  의존성이 낮은 것부터 작성해야 다른 곳에 변화가 없다.
 
-
     // 뭘 리턴할지 모르니까 일단 void
     // 뭐 필요한지 모르니까 일단 비워두고
 
-    // 클린아키텍쳐 살짝 바꾼 방식
+    // https://blog.toktokhan.dev/요즘-대세-clean-architecture-67b80df66c6
+    // https://daryeou.tistory.com/280
+    // https://techblog.woowahan.com/2647/
+    // https://medium.com/mj-studio/클린아키텍처-썼는데-왜-프로젝트가-더-더러워지지-3565aaffca8c
+    // 클린 아키텍쳐 살짝 바꾼 방식
     // notice - domain
     //        - service
 

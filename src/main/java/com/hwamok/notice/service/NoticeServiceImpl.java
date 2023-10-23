@@ -1,5 +1,7 @@
 package com.hwamok.notice.service;
 
+import com.hwamok.core.exception.ExceptionCode;
+import com.hwamok.core.response.ApiResult;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
 import lombok.RequiredArgsConstructor;
