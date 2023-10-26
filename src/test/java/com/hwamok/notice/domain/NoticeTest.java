@@ -1,5 +1,6 @@
 package com.hwamok.notice.domain;
 
+import org.aspectj.weaver.ast.Not;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,6 +18,7 @@ class NoticeTest {
     // 띄어쓰기는 _ 사용
     @Test
     void 공지사항_생성_성공() {
+        // Fixture 만들기, 반복되는 것을 메서드로 만들어서 사용하는 것.
         Notice notice = new Notice("제목", "본문");
 
         // 내가 나를 못 믿기 때문에 확인하고 싶어서
@@ -45,4 +47,48 @@ class NoticeTest {
                 isThrownBy(()->new Notice("제목", content));
     }
 
+    @Test
+    void 공지사항_수정_성공() {
+        Notice notice = new Notice("테스트", "본문");
+
+        notice.update("수정된 제목", "수정된 본문");
+
+        assertThat(notice.getTitle()).isEqualTo("수정된 제목");
+        assertThat(notice.getContent()).isEqualTo("수정된 본문");
+
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 공지사항_수정_실패_제목이_빈값_null(String title) {
+        Notice notice = new Notice("테스트", "본문");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> notice.update(title, "수정된 본문"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 공지사항_수정_실패_내용이_빈값_null(String content) {
+        Notice notice = new Notice("테스트", "본문");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> notice.update("수정된 제목", content));
+    }
+
+    @Test
+    void 공지사항_수정_실패_제목이_11글자_이상() {
+        Notice notice = new Notice("테스트", "본문");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> notice.update("제목제목제목제목제목제", "수정된 본문"));
+    }
+
+    @Test
+    void 공지사항_수정_실패_내용이_50글자_이상() {
+        Notice notice = new Notice("테스트", "본문");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> notice.update("수정된 제목", "수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문본"));
+    }
 }

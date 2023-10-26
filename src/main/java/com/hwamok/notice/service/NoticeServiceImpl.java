@@ -1,12 +1,13 @@
 package com.hwamok.notice.service;
 
-import com.hwamok.core.exception.ExceptionCode;
-import com.hwamok.core.response.ApiResult;
+import com.hwamok.core.exception.HwamokException;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.hwamok.core.exception.ExceptionCode.*;
 
 @Service
 @Transactional
@@ -17,6 +18,21 @@ public class NoticeServiceImpl implements NoticeService{
 
     @Override
     public Notice create(String title, String content) {
-        return noticeRepository.save(new Notice(title, content));
+        // throw new HwamokException(ExceptionCode.INVALID_NOTICE);
+        // HwamokException 익셉션 발생함, code, message 출력됨
+        // 테스트는 scratch.http에서 테스트함
+        // HwamokException.validate(Strings.isNotBlank(title), INVALID_NOTICE);
+
+       return noticeRepository.save(new Notice(title, content));
+    }
+
+    @Override
+    public Notice getNotice(Long id) {
+        return noticeRepository.findById(id).orElseThrow(() -> new HwamokException(NOT_FOUND_NOTICE));
+    }
+
+    @Override
+    public Notice update(Long id, String title, String content) {
+        return null;
     }
 }

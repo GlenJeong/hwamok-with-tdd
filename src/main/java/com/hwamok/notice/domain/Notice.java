@@ -1,6 +1,8 @@
 package com.hwamok.notice.domain;
 
 import com.hwamok.core.Preconditions;
+import com.hwamok.core.exception.ExceptionCode;
+import com.hwamok.core.exception.HwamokException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,8 +39,19 @@ public class Notice {
         Preconditions.require(Strings.isNotBlank(title));
         Preconditions.require(Strings.isNotBlank(content));
         Preconditions.require(title.length() <= 10 );
+        Preconditions.require(content.length() <= 50 );
 
         this.title = title;
         this.content = content;
+    }
+
+    public void update(String title, String content) {
+        Preconditions.require(Strings.isNotBlank(title));
+        Preconditions.require(Strings.isNotBlank(content));
+        Preconditions.require(title.length() <= 10 );
+        Preconditions.require(content.length() <= 50 );
+
+        this.title=title;
+        this.content=content;
     }
 }

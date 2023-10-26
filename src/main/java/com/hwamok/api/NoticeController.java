@@ -44,5 +44,4 @@ public class NoticeController {
         return Result.ok();
 
     }
-
 }

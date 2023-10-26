@@ -4,24 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hwamok.api.dto.notice.NoticeCreateDto;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcResultHandlersDsl;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 // 시나리오 테스트
@@ -83,10 +78,10 @@ class NoticeControllerTest {
 
         // Exception Handling
         // MockMvc를 생성한다.
-        //MockMvc에게 요청에 대한 정보를 입력한다.
-        //요청에 대한 응답값을 Expect를 이용하여 테스트한다.
-        //Expect가 모두 통과하면 테스트 통과
-        //Expect가 1개라도 실패하면 테스트 실패
+        // MockMvc에게 요청에 대한 정보를 입력한다.
+        // 요청에 대한 응답값을 Expect를 이용하여 테스트한다.
+        // Expect가 모두 통과하면 테스트 통과
+        // Expect가 1개라도 실패하면 테스트 실패
         mockMvc.perform(MockMvcRequestBuilders.post("/notice")
                         // 해당 url로 요청을 한다.
                         .contentType(MediaType.APPLICATION_JSON)

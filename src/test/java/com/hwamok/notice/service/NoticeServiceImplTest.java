@@ -1,13 +1,15 @@
 package com.hwamok.notice.service;
 
+import com.hwamok.core.exception.HwamokExceptionTest;
 import com.hwamok.notice.domain.Notice;
-import org.assertj.core.api.Assertions;
+import com.hwamok.notice.domain.NoticeRepository;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.assertj.core.api.Assertions;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.hwamok.core.exception.ExceptionCode.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 
@@ -33,6 +35,9 @@ class NoticeServiceImplTest {
     // 이것이 @Autowired에 빨간 줄이 생기는 이유이다.
     private NoticeService noticeService;
 
+    @Autowired
+    private NoticeRepository noticeRepository;
+
     @Test
     void 공지사항_생성_성공() {
         Notice notice = noticeService.create("123", "12345");
@@ -42,4 +47,44 @@ class NoticeServiceImplTest {
 //        Assertions.assertThat(notice.getContent()).isEqualTo("1234");
 //        Assertions.assertThat(notice.getCreatedAt()).isNotNull();
     }
+
+//    @Test
+//    void 공지사항_생성_실패_제목이_빈값() {
+////        assertThatHwamokException("").is
+//        assertThatHwamokException(SUCCESS)
+//                .isThrownBy(()-> noticeService.create("", "12345"));
+//        // 내가 원하는 커스텀 익셉션이 발생했는 지 정확히 확인할 수 있다.
+//
+//    }
+
+
+    @Test
+    void 공지사항_단건_조회_성공() {
+        // 공지사항을 조회하고 싶음
+        Notice notice = noticeRepository.save(new Notice("테스트", "본문"));
+
+        Notice foundNotice = noticeService.getNotice(notice.getId());
+
+        Assertions.assertThat(foundNotice.getId()).isEqualTo(notice.getId());
+    }
+
+    @Test
+    void 공지사항_단건_조회_실패_공지사항이_존재하지_않음() {
+        HwamokExceptionTest.assertThatHwamokException(NOT_FOUND_NOTICE)
+                .isThrownBy(() -> noticeService.getNotice(-1L));
+        // -1L 절대 존재하지 않는 값을 넣어서 실패의 조건을 만든다.
+    }
+
+    @Test
+    void 공지사항_수정_성공() {
+        Notice notice = noticeRepository.save(new Notice("제목01", "본문01"));
+        Notice foundNotice = noticeService.getNotice(notice.getId());
+
+        foundNotice.update("수정된 제목", "수정된 내용");
+
+        assertThat(foundNotice.getTitle()).isEqualTo("수정된 제목");
+        assertThat(foundNotice.getContent()).isEqualTo("수정된 내용");
+    }
 }
+
+// 공지사항 수정 실패를 성공하게 만들기
