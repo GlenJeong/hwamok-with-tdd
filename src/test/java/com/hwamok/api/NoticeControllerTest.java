@@ -2,22 +2,30 @@ package com.hwamok.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hwamok.api.dto.notice.NoticeCreateDto;
+import com.hwamok.api.dto.notice.NoticeUpdateDto;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
+import static com.hwamok.fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // 시나리오 테스트
 // API제공 - Endpoint --> localhost:8080/notice
@@ -58,6 +66,13 @@ class NoticeControllerTest {
     @Autowired
     private NoticeRepository noticeRepository;
 
+    Notice notice;
+
+    @BeforeEach // Test코드 메서드가 실행하기전에 반드시 이 메서드가 먼저 실행함
+    void setUp() {
+        notice = noticeRepository.save(createNotice());
+    }
+
     @Test
     void 공지사항_생성_성공() throws Exception{
         // 응답에 대한 공통 메시지
@@ -89,27 +104,104 @@ class NoticeControllerTest {
                         .content(objectMapper.writeValueAsBytes(request)))
                         // 내용 등록, writeValueAsString(변환할 객체): Java 객체를 JSON 형식으로 변환
                         // Java 오브젝트로 부터 JSON을 만들고 이를 Byte 배열로 반환
-                        .andDo(MockMvcResultHandlers.print())
+                        .andDo(print())
                         // 응답값 print
-                        .andExpect(MockMvcResultMatchers.status().isOk());
+                        .andExpect(status().isCreated())
                         // 응답 200, 객체를 검증하는 곳, isOk 200, isCreated 201
                         // 응답 status를 ok로 테스트
+                        .andExpectAll(
+                        jsonPath("code").value("S000"),
+                        jsonPath("message").value("success")
+                );
 
-//        Forwarded URL = null return "notice"; forward 방식
-//        Redirected URL = null
+////        Forwarded URL = null return "notice"; forward 방식
+////        Redirected URL = null
+//
+//        // 리포지토리에서 가져와서 있는 지 검사
+//        List<Notice> notices = noticeRepository.findAll();
+//        Notice notice = notices.stream().findFirst().orElseThrow(() -> new RuntimeException("not found notice"));
+//        // Optional의 의미는 null or not null 2가지만 가지고 있음
+//        // Optional뒤에 다음에 메서드 체이닝으로 orElseThrow가 null이면 throw한다. (Exception)
+//        // orElseThrow는 람다식을 통해서 익셉션을 지정할 수 있음
+//
+//
+//
+//        assertThat(notices.size()).isEqualTo(1);
+//        assertThat(notice.getTitle()).isEqualTo(request.getTitle());
+//        assertThat((notice.getContent())).isEqualTo(request.getContent());
 
-        // 리포지토리에서 가져와서 있는 지 검사
-        List<Notice> notices = noticeRepository.findAll();
-        Notice notice = notices.stream().findFirst().orElseThrow(() -> new RuntimeException("not found notice"));
-        // Optional의 의미는 null or not null 2가지만 가지고 있음
-        // Optional뒤에 다음에 메서드 체이닝으로 orElseThrow가 null이면 throw한다. (Exception)
-        // orElseThrow는 람다식을 통해서 익셉션을 지정할 수 있음
+    }
+
+    @Test
+    void 공지사항_수정_성공() throws Exception {
+
+        NoticeUpdateDto.Request request = new NoticeUpdateDto.Request("수정된 제목", "수정된 본문");
+
+        mockMvc.perform(patch("/notice/{id}", notice.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(request)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("code").value("S000"),
+                        jsonPath("message").value("success")
+                );
+
+        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
+
+        assertThat(foundNotice.getTitle()).isEqualTo("수정된 제목");
+        assertThat(foundNotice.getContent()).isEqualTo("수정된 본문");
+    }
 
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 공지사항_수정_실패__제목이_빈값_null(String title) throws Exception {
 
-        assertThat(notices.size()).isEqualTo(1);
-        assertThat(notice.getTitle()).isEqualTo(request.getTitle());
-        assertThat((notice.getContent())).isEqualTo(request.getContent());
+        NoticeUpdateDto.Request request = new NoticeUpdateDto.Request(title, "수정된 본문");
+
+        mockMvc.perform(patch("/notice/{id}", notice.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("code").value("E001"),
+                        jsonPath("message").value("필수 값이 누락되었습니다.")
+                );
+
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 공지사항_수정_실패__내용이_빈값_null(String content) throws Exception {
+
+        NoticeUpdateDto.Request request = new NoticeUpdateDto.Request("수정된 제목", content);
+
+        mockMvc.perform(patch("/notice/{id}", notice.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("code").value("E001"),
+                        jsonPath("message").value("필수 값이 누락되었습니다.")
+                );
+    }
+
+    @Test
+    void 공지사항_수정_실패_존재하지_않는_공지사항() throws Exception {
+        NoticeUpdateDto.Request request = new NoticeUpdateDto.Request("수정된 제목", "수정된 본문");
+
+        mockMvc.perform(patch("/notice/{id}", -1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("code").value("E003"),
+                        jsonPath("message").value("공지사항을 찾을 수가 없습니다.")
+                );
 
     }
 }

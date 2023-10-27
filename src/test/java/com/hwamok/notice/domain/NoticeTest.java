@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.Instant;
 
+import static com.hwamok.fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,10 @@ class NoticeTest {
     @Test
     void 공지사항_생성_성공() {
         // Fixture 만들기, 반복되는 것을 메서드로 만들어서 사용하는 것.
-        Notice notice = new Notice("제목", "본문");
+        // Notice notice = new Notice("제목", "본문");
+        Notice notice = new Notice("제목", "본문"); // createNotice와 동일
+
+
 
         // 내가 나를 못 믿기 때문에 확인하고 싶어서
         // System.out.println("notice.getContent() = " + notice.getContent());
@@ -37,19 +41,19 @@ class NoticeTest {
     @NullAndEmptySource
     void 공지사항_생성_실패__제목이_빈값_혹은_null(String title) { // 익셥션 발생하는 테스트 코딩, 빈값이랑 null 테스트
         assertThatIllegalArgumentException().
-                isThrownBy(()->new Notice(title, "본문"));
+                isThrownBy(()->createNotice(title, "본문"));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void 공지사항_생성_실패__내용이_빈값_혹은_null(String content) { // 익셥션 발생하는 테스트 코딩, 빈값이랑 null 테스트
         assertThatIllegalArgumentException().
-                isThrownBy(()->new Notice("제목", content));
+                isThrownBy(()->createNotice("제목", content));
     }
 
     @Test
     void 공지사항_수정_성공() {
-        Notice notice = new Notice("테스트", "본문");
+        Notice notice = createNotice();
 
         notice.update("수정된 제목", "수정된 본문");
 
@@ -61,7 +65,7 @@ class NoticeTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 공지사항_수정_실패_제목이_빈값_null(String title) {
-        Notice notice = new Notice("테스트", "본문");
+        Notice notice = createNotice();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> notice.update(title, "수정된 본문"));
@@ -70,7 +74,7 @@ class NoticeTest {
     @ParameterizedTest
     @NullAndEmptySource
     void 공지사항_수정_실패_내용이_빈값_null(String content) {
-        Notice notice = new Notice("테스트", "본문");
+        Notice notice = createNotice();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> notice.update("수정된 제목", content));
@@ -78,7 +82,7 @@ class NoticeTest {
 
     @Test
     void 공지사항_수정_실패_제목이_11글자_이상() {
-        Notice notice = new Notice("테스트", "본문");
+        Notice notice = createNotice();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> notice.update("제목제목제목제목제목제", "수정된 본문"));
@@ -86,7 +90,7 @@ class NoticeTest {
 
     @Test
     void 공지사항_수정_실패_내용이_50글자_이상() {
-        Notice notice = new Notice("테스트", "본문");
+        Notice notice = createNotice();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> notice.update("수정된 제목", "수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문본"));

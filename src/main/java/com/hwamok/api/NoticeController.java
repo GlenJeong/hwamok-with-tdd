@@ -1,16 +1,14 @@
 package com.hwamok.api;
 
 import com.hwamok.api.dto.notice.NoticeCreateDto;
+import com.hwamok.api.dto.notice.NoticeUpdateDto;
 import com.hwamok.core.response.ApiResult;
 import com.hwamok.core.response.Result;
 import com.hwamok.notice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 // Java Object를 Json으로 변환하거나 Json을 Java Object로 변환하는데 사용할 수 있는 Java 라이브러리
 // JSON 데이터 형태 { "name" : "Jones", "age" : "42" , "city" : "New York" }
@@ -41,7 +39,13 @@ public class NoticeController {
         // JSON 데이터 형태 { "name" : "Jones", "age" : "42" , "city" : "New York" }
         // 즉, 비동기식 클라-서버 통신을 위해 JSON 형식의 데이터를 주고받는 것이다.
         noticeService.create(request.getTitle(), request.getContent());
-        return Result.ok();
+        return Result.created();
 
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResult<?>> updateNoice(@PathVariable Long id, @RequestBody NoticeUpdateDto.Request dto) {
+        noticeService.update(id, dto.getTitle(), dto.getContent());
+        return Result.ok();
     }
 }

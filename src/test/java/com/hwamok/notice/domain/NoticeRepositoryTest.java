@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import static com.hwamok.fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
@@ -24,7 +25,7 @@ class NoticeRepositoryTest {
     @Test
     void 공지사항_저장_성공() {
        Notice notice =
-               noticeRepository.save(new Notice("제목", "본문"));
+               noticeRepository.save(createNotice());
 
         assertThat(notice.getId()).isNotNull();
     }
@@ -47,7 +48,7 @@ class NoticeRepositoryTest {
 //        assertThat(notice.getId()).isNotNull();
 
            assertThatIllegalArgumentException()
-                    .isThrownBy(()-> noticeRepository.save(new Notice("제목제목제목제목제목제", "본문")));
+                    .isThrownBy(()-> noticeRepository.save(createNotice("제목제목제목제목제목제", "본문")));
 
     }
 

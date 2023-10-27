@@ -14,7 +14,7 @@ public enum ExceptionCode { // enum을 사용할 때는 값이 바뀌지 않을 
     //   Redirected URL = null
     //          Cookies = []
 
-    SUCCESS("S000", "SUCCESS"), // 이렇게 값을 지정하려면 iv와 생성자가 필요하다. 생성자 호출이다.
+    SUCCESS("S000", "success"), // 이렇게 값을 지정하려면 iv와 생성자가 필요하다. 생성자 호출이다.
 
     ERROR_SYSTEM("E000", "치명적인 오류가 발생했습니다."),
 
@@ -22,7 +22,9 @@ public enum ExceptionCode { // enum을 사용할 때는 값이 바뀌지 않을 
 
     INVALID_NOTICE("E002", " 공지사항 작성 중 에러가 발생하였습니다."),
 
-    NOT_FOUND_NOTICE("E003", "공지사항을 찾을 수가 없습니다.");
+    NOT_FOUND_NOTICE("E003", "공지사항을 찾을 수가 없습니다."),
+
+    FAILED_TO_MODIFY_NOTICE("E004", "공지사항을 수정하지 못 했습니다.");
 
 
     private final String code; // final 재할당을 금지하는 것

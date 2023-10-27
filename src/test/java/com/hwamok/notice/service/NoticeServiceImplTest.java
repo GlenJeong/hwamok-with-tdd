@@ -5,10 +5,13 @@ import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
 import org.assertj.core.api.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.hwamok.core.exception.ExceptionCode.*;
+import static com.hwamok.fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -61,7 +64,7 @@ class NoticeServiceImplTest {
     @Test
     void 공지사항_단건_조회_성공() {
         // 공지사항을 조회하고 싶음
-        Notice notice = noticeRepository.save(new Notice("테스트", "본문"));
+        Notice notice = noticeRepository.save(createNotice());
 
         Notice foundNotice = noticeService.getNotice(notice.getId());
 
@@ -77,13 +80,55 @@ class NoticeServiceImplTest {
 
     @Test
     void 공지사항_수정_성공() {
-        Notice notice = noticeRepository.save(new Notice("제목01", "본문01"));
-        Notice foundNotice = noticeService.getNotice(notice.getId());
+        Notice notice = noticeRepository.save(createNotice());
 
-        foundNotice.update("수정된 제목", "수정된 내용");
+        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
+
+        foundNotice = noticeService.update(foundNotice.getId(), "수정된 제목", "수정된 내용");
 
         assertThat(foundNotice.getTitle()).isEqualTo("수정된 제목");
         assertThat(foundNotice.getContent()).isEqualTo("수정된 내용");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 공지사항_생성_실패__제목이_빈값_혹은_null(String title) {
+        Notice notice = noticeRepository.save(createNotice());
+
+        Notice foundNotice = noticeService.getNotice(notice.getId());
+
+        assertThatIllegalArgumentException().isThrownBy(() -> noticeService.update(foundNotice.getId(),title,"수정된 내용"));
+
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 공지사항_생성_실패__내용이_빈값_혹은_null(String content) {
+        Notice notice = noticeRepository.save(createNotice());
+
+        Notice foundNotice = noticeService.getNotice(notice.getId());
+
+        assertThatIllegalArgumentException().isThrownBy(() -> noticeService.update(foundNotice.getId(),"수정된 제목",content));
+    }
+
+    @Test
+    void 공지사항_수정_실패_제목이_11글자_이상() {
+        Notice notice = noticeRepository.save(createNotice());
+
+        Notice foundNotice = noticeService.getNotice(notice.getId());
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> noticeService.update(foundNotice.getId(), "수정된제목수정된제목수", "수정된 본문"));
+    }
+
+    @Test
+    void 공지사항_수정_실패_내용이_50글자_이상() {
+        Notice notice = noticeRepository.save(createNotice());
+
+        Notice foundNotice = noticeService.getNotice(notice.getId());
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> noticeService.update(foundNotice.getId(), "수정된 제목", "수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문본"));
     }
 }
 

@@ -21,7 +21,6 @@ public class HwamokException extends RuntimeException { // RuntimeException ÏÉÅÏ
 //        if(!expression){
 //            throw new HwamokException(exceptionCode);
 //        }
-
 //    }
 }
 

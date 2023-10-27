@@ -32,7 +32,10 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     @Override
-    public Notice update(Long id, String title, String content) {
-        return null;
+    public Notice update(Long id, String title, String content) { // findById가 유일한 값이기 때문에 이걸로 조회
+        Notice notice = noticeRepository.findById(id).orElseThrow(() -> new HwamokException(NOT_FOUND_NOTICE));
+        notice.update(title, content);
+
+        return notice;
     }
 }
