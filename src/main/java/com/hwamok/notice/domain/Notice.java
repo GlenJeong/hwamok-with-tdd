@@ -35,6 +35,7 @@ public class Notice {
         // if문이 true나 false일 때 긍정문으로 사용해서 작성한다.
         // isBlank보단 isNotBlank로 작성해야 한다. 긍정문으로 작성하는 것이 좋다.
 
+        //HwamokException.validate(Strings.isNotBlank(title), ExceptionCode.REQUIRED_PARAMETER);
         // 도메인 보호 로직 ---> Domain Driven Design DDD의 기본 수칙 중 1개
         Preconditions.require(Strings.isNotBlank(title));
         Preconditions.require(Strings.isNotBlank(content));

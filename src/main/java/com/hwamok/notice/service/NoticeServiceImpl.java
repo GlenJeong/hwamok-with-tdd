@@ -1,5 +1,6 @@
 package com.hwamok.notice.service;
 
+import com.hwamok.api.dto.notice.NoticeCreateDto;
 import com.hwamok.core.exception.HwamokException;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;

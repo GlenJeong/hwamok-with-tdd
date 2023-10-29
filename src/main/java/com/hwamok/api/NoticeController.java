@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.*;
 // @ResponseBody 가 붙은 파라미터에는 HTTP 요청의 분문 body 부분이 그대로 전달된다.
 @RequestMapping("/notice")
 @RequiredArgsConstructor // lombok의 어노테이션의 하나로 생성자를 자동으로 주입해 준다.
+// @RequiredArgsConstructor은 클래스에 선언된 final 변수들, 필드들을 매개변수로 하는 생성자를 자동으로 생성해 준다.
 public class NoticeController {
     @Autowired
-    private NoticeService noticeService;
+    private final NoticeService noticeService;
 
 
     @PostMapping // 스프링에서 제공하는 ResponseEntity를 이용하여 성공, 실패 메시지를 재정의하는 코드를 만든 것.

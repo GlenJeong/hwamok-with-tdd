@@ -58,6 +58,16 @@ class NoticeRepositoryTest {
     //   Assertions.assertThatIllegalArgumentException()
     //            .isThrownBy(()-> noticeRepository.save(new Notice("제목제목제목제목제목제", "본문")));
 
+    @Test
+    void 공지사항_저장_실패_내용이_50글자_이상() {
+//        Notice notice = noticeRepository.save(new Notice("제목", "본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본"));
+
+//        assertThat(notice.getId()).isNotNull();
+        assertThatIllegalArgumentException()
+                .isThrownBy(() ->noticeRepository.save(new Notice("제목", "본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본")));
+    }
+
+
     // content 50글자로 테스트하기
     // 싱글턴 패턴
     // controller -> service -> repository => 계층 코드 아키텍쳐

@@ -21,6 +21,8 @@ public class Result {
         // ResponEntity를 이용해서 클라이언트에게 응답을 보냄
     }
 
+
+
     public static ResponseEntity<ApiResult<?>> error() { // error 코드는 원래 500인데 200으로 속여서 테스트는 성공한 것으로 만든다.
         return ResponseEntity.status(200).body(ApiResult.of(ExceptionCode.ERROR_SYSTEM));
     }

@@ -17,11 +17,11 @@ public class HwamokException extends RuntimeException { // RuntimeException ÏÉÅÏ
         this.exceptionCode=exceptionCode;
     }
 
-//    public static void validate(boolean expression, ExceptionCode exceptionCode) {
-//        if(!expression){
-//            throw new HwamokException(exceptionCode);
-//        }
-//    }
+    public static void validate(boolean expression, ExceptionCode exceptionCode) {
+        if(!expression){
+            throw new HwamokException(exceptionCode);
+        }
+    }
 }
 
 

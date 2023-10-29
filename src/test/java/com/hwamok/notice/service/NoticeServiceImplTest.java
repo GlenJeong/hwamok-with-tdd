@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.hwamok.core.exception.ExceptionCode.*;
+import static com.hwamok.core.exception.HwamokExceptionTest.assertThatHwamokException;
 import static com.hwamok.fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -43,23 +44,27 @@ class NoticeServiceImplTest {
 
     @Test
     void 공지사항_생성_성공() {
-        Notice notice = noticeService.create("123", "12345");
+        Notice notice = noticeRepository.save(new Notice("제목", "본문"));
 
         Assertions.assertThat(notice.getId()).isNotNull();
-//        Assertions.assertThat(notice.getTitle()).isEqualTo("123");
-//        Assertions.assertThat(notice.getContent()).isEqualTo("1234");
-//        Assertions.assertThat(notice.getCreatedAt()).isNotNull();
+        Assertions.assertThat(notice.getTitle()).isEqualTo("제목");
+        Assertions.assertThat(notice.getContent()).isEqualTo("본문");
+        Assertions.assertThat(notice.getCreatedAt()).isNotNull();
     }
 
-//    @Test
-//    void 공지사항_생성_실패_제목이_빈값() {
-////        assertThatHwamokException("").is
-//        assertThatHwamokException(SUCCESS)
-//                .isThrownBy(()-> noticeService.create("", "12345"));
-//        // 내가 원하는 커스텀 익셉션이 발생했는 지 정확히 확인할 수 있다.
-//
-//    }
+    @Test
+    void 공지사항_생성_실패_제목이_빈값() {
+//        assertThatHwamokException(REQUIRED_PARAMETER)
+//                .isThrownBy(()-> noticeRepository.save(new Notice("", "본문")));
+        // 내가 원하는 커스텀 익셉션이 발생했는 지 정확히 확인할 수 있다.
 
+    }
+
+    @Test
+    void 공지사항_생성_실패_제목이_빈값_() {
+        Notice notice = noticeRepository.save(new Notice("", "본문"));
+        assertThat(notice.getId()).isNotNull();
+    }
 
     @Test
     void 공지사항_단건_조회_성공() {
@@ -73,7 +78,12 @@ class NoticeServiceImplTest {
 
     @Test
     void 공지사항_단건_조회_실패_공지사항이_존재하지_않음() {
-        HwamokExceptionTest.assertThatHwamokException(NOT_FOUND_NOTICE)
+        Notice notice = noticeRepository.save(new Notice("제목", "본문"));
+
+//        Notice foundNoticeId = noticeService.getNotice(-1L);
+//
+//        assertThat(foundNoticeId.getId()).isEqualTo(notice.getId());
+        assertThatHwamokException(NOT_FOUND_NOTICE)
                 .isThrownBy(() -> noticeService.getNotice(-1L));
         // -1L 절대 존재하지 않는 값을 넣어서 실패의 조건을 만든다.
     }

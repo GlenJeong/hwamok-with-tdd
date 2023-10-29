@@ -22,6 +22,7 @@ import static com.hwamok.fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -69,6 +70,8 @@ class NoticeControllerTest {
     Notice notice;
 
     @BeforeEach // Test코드 메서드가 실행하기전에 반드시 이 메서드가 먼저 실행함
+    // 수정할 때 샘플 데이터가 필요하기 때문에 Test코드 메서드가 실행하기 전에
+    // 데이터를 만들어 놓는 다.
     void setUp() {
         notice = noticeRepository.save(createNotice());
     }
@@ -97,12 +100,12 @@ class NoticeControllerTest {
         // 요청에 대한 응답값을 Expect를 이용하여 테스트한다.
         // Expect가 모두 통과하면 테스트 통과
         // Expect가 1개라도 실패하면 테스트 실패
-        mockMvc.perform(MockMvcRequestBuilders.post("/notice")
+        mockMvc.perform(post("/notice")
                         // 해당 url로 요청을 한다.
                         .contentType(MediaType.APPLICATION_JSON)
                         // Json 타입으로 지정
                         .content(objectMapper.writeValueAsBytes(request)))
-                        // 내용 등록, writeValueAsString(변환할 객체): Java 객체를 JSON 형식으로 변환
+                        // 내용 등록, writeValueAsBytes(변환할 객체): Java 객체를 JSON 형식으로 변환
                         // Java 오브젝트로 부터 JSON을 만들고 이를 Byte 배열로 반환
                         .andDo(print())
                         // 응답값 print
@@ -118,8 +121,8 @@ class NoticeControllerTest {
 ////        Redirected URL = null
 //
 //        // 리포지토리에서 가져와서 있는 지 검사
-//        List<Notice> notices = noticeRepository.findAll();
-//        Notice notice = notices.stream().findFirst().orElseThrow(() -> new RuntimeException("not found notice"));
+        List<Notice> notices = noticeRepository.findAll();
+        Notice notice = notices.stream().findFirst().orElseThrow(() -> new RuntimeException("not found notice"));
 //        // Optional의 의미는 null or not null 2가지만 가지고 있음
 //        // Optional뒤에 다음에 메서드 체이닝으로 orElseThrow가 null이면 throw한다. (Exception)
 //        // orElseThrow는 람다식을 통해서 익셉션을 지정할 수 있음
@@ -127,15 +130,17 @@ class NoticeControllerTest {
 //
 //
 //        assertThat(notices.size()).isEqualTo(1);
-//        assertThat(notice.getTitle()).isEqualTo(request.getTitle());
-//        assertThat((notice.getContent())).isEqualTo(request.getContent());
+        System.out.println("notice.getTitle() = " + notice.getTitle());
+        System.out.println("request.getTitle() = " + request.getTitle());
+        assertThat(notice.getTitle()).isEqualTo(request.getTitle());
+        assertThat((notice.getContent())).isEqualTo(request.getContent());
 
     }
 
     @Test
     void 공지사항_수정_성공() throws Exception {
 
-        NoticeUpdateDto.Request request = new NoticeUpdateDto.Request("수정된 제목", "수정된 본문");
+        NoticeCreateDto.Request request = new NoticeCreateDto.Request("수정된 제목", "수정된 본문");
 
         mockMvc.perform(patch("/notice/{id}", notice.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -151,6 +156,7 @@ class NoticeControllerTest {
 
         assertThat(foundNotice.getTitle()).isEqualTo("수정된 제목");
         assertThat(foundNotice.getContent()).isEqualTo("수정된 본문");
+
     }
 
 

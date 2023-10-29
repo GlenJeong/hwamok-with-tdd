@@ -22,7 +22,19 @@ public class HwamokExceptionTest {
         return new HwamokExceptionTest(exceptionCode, Assertions.assertThatExceptionOfType(HwamokException.class));
     }
 
+    // public static ThrowableTypeAssert<IllegalArgumentException> assertThatIllegalArgumentException() {
+    //    return assertThatExceptionOfType(IllegalArgumentException.class);
+    //  }
+
     public void isThrownBy(ThrowingCallable throwingCallable) {
         this.throwableTypeAssert.isThrownBy(throwingCallable).withMessage(exceptionCode.name());
     }
+
+    //  public ThrowableAssertAlternative<T> isThrownBy(final ThrowingCallable throwingCallable) {
+    //    Throwable throwable = ThrowableAssert.catchThrowable(throwingCallable);
+    //    checkThrowableType(throwable);
+    //    @SuppressWarnings("unchecked")
+    //    T castThrowable = (T) throwable;
+    //    return buildThrowableTypeAssert(castThrowable).as(description);
+    //  }
 }
