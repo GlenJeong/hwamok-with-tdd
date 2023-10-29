@@ -7,10 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalTime;
-import java.util.Calendar;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -38,12 +38,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    private Calendar birthday;
+    @Temporal(TemporalType.DATE)
+     private Date birthday;
 
     private Instant createdAt=Instant.now(); // now() 현재 시간으로 반환
 
-    //    public User(String loginId, String password, String email, String nickname, String name, Date birthday, long loginDate) {
-    public User(String loginId, String password, String email, String nickname, String name,long loginDate, Calendar birthday) {
+    public User(String loginId, String password, String email, String nickname, String name,long loginDate, String birthday) throws ParseException {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -60,10 +60,14 @@ public class User {
         this.nickname = nickname;
         this.name = name;
         this.status = UserStatus.of(loginDate); // Active or InActive
-        this.birthday = birthday;
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = format.parse(birthday);
+
+        this.birthday = date;
     }
 
-    public void updateUser(String loginId, String password, String email, String nickname, String name,long loginDate, Calendar birthday) {
+    public void updateUser(String loginId, String password, String email, String nickname, String name,long loginDate, String birthday) throws ParseException {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -80,7 +84,10 @@ public class User {
         this.nickname = nickname;
         this.name = name;
         this.status = UserStatus.of(loginDate); // Active or InActive
-        this.birthday = birthday;
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = format.parse(birthday);
+        this.birthday = date;
     }
 }
 //유저 엔티티

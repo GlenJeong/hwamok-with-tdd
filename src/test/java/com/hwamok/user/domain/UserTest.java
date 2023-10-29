@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -19,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 class UserTest {
 
     @Test
-    void 사용자_생성_성공() {
+    void 사용자_생성_성공() throws ParseException {
         // String loginId, String password, String email, String nickname, String name, Date birthday
         // 최근 로그인이 2023년 7월, 22일 가정하고 date2.set(2023, 7, 29); 날짜를 초 단위로 환산  loginDate = date2.getTimeInMillis()/1000 => 1693313241
         // Active 최근 로그인 날짜와 오늘 날짜의 차이가 100일 미만이면 Active
@@ -34,7 +38,7 @@ class UserTest {
         long loginDate = date2.getTimeInMillis()/1000;
         System.out.println("loginDate = " + loginDate);
 
-        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance());
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
 
         Assertions.assertThat(user.getId()).isNull();
         Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
@@ -43,8 +47,8 @@ class UserTest {
         Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
         Assertions.assertThat(user.getName()).isEqualTo("정인범");
         Assertions.assertThat(user.getStatus()).isEqualTo(Active);
+        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
         Assertions.assertThat(user.getBirthday()).isNotNull();
-
 
 
     }
@@ -56,7 +60,7 @@ class UserTest {
         date2.set(2023, 6, 25);// 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance());
+//        User user = new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
 //
 //        Assertions.assertThat(user.getId()).isNull();
 //        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
@@ -65,10 +69,11 @@ class UserTest {
 //        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
 //        Assertions.assertThat(user.getName()).isEqualTo("정인범");
 //        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
 //        Assertions.assertThat(user.getBirthday()).isNotNull();
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance()));
+                .isThrownBy(()-> new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
 
     }
 
@@ -79,7 +84,7 @@ class UserTest {
         date2.set(2023, 6, 25);// 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance());
+//        User user = new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
 //
 //        Assertions.assertThat(user.getId()).isNull();
 //        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
@@ -88,10 +93,11 @@ class UserTest {
 //        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
 //        Assertions.assertThat(user.getName()).isEqualTo("정인범");
 //        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
 //        Assertions.assertThat(user.getBirthday()).isNotNull();
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance()));
+                .isThrownBy(()-> new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
 
     }
 
@@ -102,7 +108,7 @@ class UserTest {
         date2.set(2023, 6, 25);// 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User("jyb1624", "1234", email, "Glenn", "정인범", loginDate, Calendar.getInstance());
+//        User user = new User("jyb1624", "1234", email, "Glenn", "정인범", loginDate, "1988-02-26");
 //
 //        Assertions.assertThat(user.getId()).isNull();
 //        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
@@ -111,10 +117,11 @@ class UserTest {
 //        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
 //        Assertions.assertThat(user.getName()).isEqualTo("정인범");
 //        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
 //        Assertions.assertThat(user.getBirthday()).isNotNull();
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User("jyb1624", "1234", email, "Glenn", "정인범", loginDate, Calendar.getInstance()));
+                .isThrownBy(()-> new User("jyb1624", "1234", email, "Glenn", "정인범", loginDate, "1988-02-26"));
     }
 
     @ParameterizedTest
@@ -124,7 +131,7 @@ class UserTest {
         date2.set(2023, 6, 25);// 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, loginDate, Calendar.getInstance());
+//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, loginDate, "1988-02-26");
 //
 //        Assertions.assertThat(user.getId()).isNull();
 //        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
@@ -133,10 +140,11 @@ class UserTest {
 //        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
 //        Assertions.assertThat(user.getName()).isEqualTo("정인범");
 //        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
 //        Assertions.assertThat(user.getBirthday()).isNotNull();
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, loginDate, Calendar.getInstance()));
+                .isThrownBy(()-> new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, loginDate, "1988-02-26"));
     }
 
     @Test
@@ -145,11 +153,11 @@ class UserTest {
         date2.set(2023, 6, 25); // 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance());
+//        User user = new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
 //        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624162");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance()));
+                .isThrownBy(()->new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
 
     }
 
@@ -159,11 +167,11 @@ class UserTest {
         date2.set(2023, 6, 25); // 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance());
+//        User user = new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
 //        Assertions.assertThat(user.getPassword()).isEqualTo("123456789101234567891012345678910");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance()));
+                .isThrownBy(()->new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
 
     }
 
@@ -173,11 +181,11 @@ class UserTest {
         date2.set(2023, 6, 25); // 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance());
+//        User user = new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
 //        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624jyb1624jyb1624@test.com");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", loginDate, Calendar.getInstance()));
+                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
 
     }
 
@@ -187,11 +195,11 @@ class UserTest {
         date2.set(2023, 6, 25); // 100일 미만 Active
         long loginDate = date2.getTimeInMillis()/1000;
 
-//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범정인범정인범정인범", loginDate, Calendar.getInstance());
+//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범정인범정인범정인범", loginDate, "1988-02-26");
 //        Assertions.assertThat(user.getName()).isEqualTo("정인범정인범정인범정인범");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범정인범정인범정인범", loginDate, Calendar.getInstance()));
+                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범정인범정인범정인범", loginDate, "1988-02-26"));
 
     }
 
