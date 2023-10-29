@@ -2,7 +2,9 @@ package com.hwamok;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+@EnableJpaAuditing
 @SpringBootTest // full application config을 로드해서 통합 테스트를 진행하기 위한 어노테이션이다
     // @SpringBootTest는 @SpringBootApplication을 찾아가서 모든 Bean을 로드하게 됨
 // 통합 테스트를 제공하는 가장 기본적인 테스트 애노테이션으로

@@ -2,7 +2,9 @@ package com.hwamok;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+@EnableJpaAuditing
 @SpringBootApplication
 public class Application {
     // Spring MVC 패턴에 맞춰서 개발 <--- 아래의 순서대로 개발하면 상당히 어려운 개발 방법
