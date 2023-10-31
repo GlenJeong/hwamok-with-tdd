@@ -1,44 +1,22 @@
 package com.hwamok.user.domain;
 
-import com.hwamok.notice.domain.Notice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.text.ParseException;
-import java.util.Date;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 
-import static com.hwamok.fixtures.NoticeFixture.createNotice;
-import static com.hwamok.user.domain.UserStatus.Active;
-import static com.hwamok.user.domain.UserStatus.InActive;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
 class UserTest {
 
     @Test
-    void 사용자_생성_성공() throws ParseException {
-        // String loginId, String password, String email, String nickname, String name, Date birthday
-        // 최근 로그인이 2023년 7월, 22일 가정하고 date2.set(2023, 7, 29); 날짜를 초 단위로 환산  loginDate = date2.getTimeInMillis()/1000 => 1693313241
-        // Active 최근 로그인 날짜와 오늘 날짜의 차이가 100일 미만이면 Active
-        // InActive 최근 로그인 날짜와 오늘 날짜의 차이가 100일 이상이면 InActive
-        // 2023년 10월 29일 1698586852
-        // 2023년 7월 20일 1689860625   101일 차이 InActive 8726227  8640000
-        // 2023년 7월 25일 1690292674   96일차    Active    8294178  8640000
+    void 회원_가입_성공() throws ParseException {
+        // userStatus = 회원 활성화, 계정 휴면
+        // accountStatus = 계정 활성화, 계정 탈퇴
 
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25); // 7월 20일(101일) 100일 이상 InActive 1689860199, 7월 25일(96일) 100일 미만 Active 1690292220
-        // month는 0부터 시작하기 때문에 6은 7월
-        long loginDate = date2.getTimeInMillis()/1000;
-        System.out.println("loginDate = " + loginDate);
-
-        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
 
         Assertions.assertThat(user.getId()).isNull();
         Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
@@ -46,162 +24,259 @@ class UserTest {
         Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
         Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
         Assertions.assertThat(user.getName()).isEqualTo("정인범");
-        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
+        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
         Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
-        Assertions.assertThat(user.getBirthday()).isNotNull();
+        Assertions.assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVATED);
 
 
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 사용자_생성_실패_loginId_빈값_혹은_null(String loginId) {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25);// 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
-
-//        User user = new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
-//
-//        Assertions.assertThat(user.getId()).isNull();
-//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
-//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
-//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
-//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
-//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
-//        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
-//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
-//        Assertions.assertThat(user.getBirthday()).isNotNull();
-
-        Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
-
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 사용자_생성_실패_password_빈값_혹은_null(String password) {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25);// 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
-
-//        User user = new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
-//
-//        Assertions.assertThat(user.getId()).isNull();
-//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
-//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
-//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
-//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
-//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
-//        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
-//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
-//        Assertions.assertThat(user.getBirthday()).isNotNull();
-
-        Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
-
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 사용자_생성_실패_email_빈값_혹은_null(String email) {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25);// 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
-
-//        User user = new User("jyb1624", "1234", email, "Glenn", "정인범", loginDate, "1988-02-26");
-//
-//        Assertions.assertThat(user.getId()).isNull();
-//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
-//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
-//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
-//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
-//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
-//        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
-//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
-//        Assertions.assertThat(user.getBirthday()).isNotNull();
-
-        Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User("jyb1624", "1234", email, "Glenn", "정인범", loginDate, "1988-02-26"));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    void 사용자_생성_실패_name_빈값_혹은_null(String name) {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25);// 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
-
-//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, loginDate, "1988-02-26");
-//
-//        Assertions.assertThat(user.getId()).isNull();
-//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
-//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
-//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
-//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
-//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
-//        Assertions.assertThat(user.getStatus()).isEqualTo(Active);
-//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
-//        Assertions.assertThat(user.getBirthday()).isNotNull();
-
-        Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, loginDate, "1988-02-26"));
     }
 
     @Test
-    void 사용자_생성_실패_loginId_11글자_이상() {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25); // 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
+    void 회원_탈퇴_성공() throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+        System.out.println("withdraw user.getAccountStatus() = " + user.getAccountStatus());
+        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
 
-//        User user = new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
+        user.withdraw();
+
+        Assertions.assertThat(user.getId()).isNull();
+        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
+        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
+        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
+        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
+        Assertions.assertThat(user.getName()).isEqualTo("정인범");
+        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
+        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
+
+        System.out.println("withdraw user.getAccountStatus() = " + user.getAccountStatus());
+        Assertions.assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.INACTIVATED);
+    }
+
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_가입_실패_loginId_빈값_혹은_null(String loginId) throws Exception{
+
+//        User user = new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+//        Assertions.assertThat(user.getId()).isNull();
+//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
+//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
+//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
+//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
+//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
+//        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
+//        Assertions.assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVATED);
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_가입_실패_password_빈값_혹은_null(String password) {
+
+//        User user = new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+//        Assertions.assertThat(user.getId()).isNull();
+//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
+//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
+//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
+//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
+//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
+//        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
+//        Assertions.assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVATED);
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_가입_실패_email_빈값_혹은_null(String email) throws Exception {
+
+//        User user = new User("jyb1624", "1234", email, "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+//        Assertions.assertThat(user.getId()).isNull();
+//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
+//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
+//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
+//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
+//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
+//        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
+//        Assertions.assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVATED);
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> new User("jyb1624", "1234", email, "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_가입_실패_name_빈값_혹은_null(String name) throws Exception {
+
+
+//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+//        Assertions.assertThat(user.getId()).isNull();
+//        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624");
+//        Assertions.assertThat(user.getPassword()).isEqualTo("1234");
+//        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624@test.com");
+//        Assertions.assertThat(user.getNickname()).isEqualTo("Glenn");
+//        Assertions.assertThat(user.getName()).isEqualTo("정인범");
+//        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
+//        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
+//        Assertions.assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVATED);
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, "ACTIVATED", "1988-02-26", "ACTIVATED"));
+    }
+
+    @Test
+    void 회원_가입_실패_loginId_11글자_이상() throws Exception {
+
+//        User user = new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
 //        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb1624162");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
+                .isThrownBy(()->new User("jyb16241624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
 
     }
 
     @Test
-    void 사용자_생성_실패_password_30글자_이상() {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25); // 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
+    void 회원_가입_실패_password_31글자_이상() throws Exception {
 
-//        User user = new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
+//        User user = new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
 //        Assertions.assertThat(user.getPassword()).isEqualTo("123456789101234567891012345678910");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
+                .isThrownBy(()->new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
 
     }
 
     @Test
-    void 사용자_생성_실패_email_30글자_이상() {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25); // 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
+    void 회원_가입_실패_email_31글자_이상()throws Exception {
 
-//        User user = new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", loginDate, "1988-02-26");
+//        User user = new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
 //        Assertions.assertThat(user.getEmail()).isEqualTo("jyb1624jyb1624jyb1624@test.com");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", loginDate, "1988-02-26"));
+                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624jyb1624jyb16241@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
 
     }
 
     @Test
-    void 사용자_생성_실패_name_10글자_이상() {
-        Calendar date2 = Calendar.getInstance();
-        date2.set(2023, 6, 25); // 100일 미만 Active
-        long loginDate = date2.getTimeInMillis()/1000;
+    void 회원_가입_실패_name_11글자_이상() throws Exception {
 
-//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범정인범정인범정인범", loginDate, "1988-02-26");
-//        Assertions.assertThat(user.getName()).isEqualTo("정인범정인범정인범정인범");
+//        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "나무잎이오색으로물든가을", "ACTIVATED", "1988-02-26", "ACTIVATED");
+//        Assertions.assertThat(user.getName()).isEqualTo("나무잎이오색으로물든가을");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범정인범정인범정인범", loginDate, "1988-02-26"));
-
+                .isThrownBy(()->new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "나무잎이오색으로물든가을", "ACTIVATED", "1988-02-26", "ACTIVATED"));
     }
 
+    @Test
+    void 회원_수정_성공() throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
 
+        user.updateUser("jyb0226", "4321", "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThat(user.getId()).isNull();
+        Assertions.assertThat(user.getLoginId()).isEqualTo("jyb0226");
+        Assertions.assertThat(user.getPassword()).isEqualTo("4321");
+        Assertions.assertThat(user.getEmail()).isEqualTo("jyb0226@test.com");
+        Assertions.assertThat(user.getNickname()).isEqualTo("InBeom");
+        Assertions.assertThat(user.getName()).isEqualTo("인범");
+        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
+        Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
+        Assertions.assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVATED);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_수정_실패_loginId_빈값_혹은_null(String loginId) throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        user.updateUser(loginId, "4321", "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser(loginId, "4321", "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_수정_실패_password_빈값_혹은_null(String password) throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        // user.updateUser("jyb1624", password, "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser("jyb0226", password, "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_수정_실패_email_빈값_혹은_null(String email) throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        // user.updateUser("jyb1624", "1234", email, "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser("jyb1624", "1234", email, "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 회원_수정_실패_name_빈값_혹은_null(String name) throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        // user.updateUser("jyb0226", "4321", "jyb0226@test.com", "InBeom", name, "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser("jyb0226", "4321", "jyb0226@test.com", "InBeom", name, "ACTIVATED", "1988-02-26", "ACTIVATED"));
+    }
+
+    @Test
+    void 회원_수정_실패_loginId_11글자_이상() throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        // user.updateUser("jybjyb02260226", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser("jybjyb02260226", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED"));
+    }
+
+    @Test
+    void 회원_수정_실패_password_31글자_이상() throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        // user.updateUser("jyb0226", "109876543211098765432110987654321", "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser("jyb0226", "109876543211098765432110987654321", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED"));
+    }
+
+    @Test
+    void 회원_수정_실패_email_31글자_이상() throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        // user.updateUser("jyb0226", "4321", "jyb0226jyb0226jyb0226123@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser("jyb0226", "4321", "jyb0226jyb0226jyb0226123@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED"));
+    }
+
+    @Test
+    void 회원_수정_실패_name_11글자_이상() throws Exception {
+        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "INACTIVATED");
+
+        // user.updateUser("jyb0226", "4321", "jyb0226@test.com", "InBeom", "늦은오후하늘에노을과구름", "ACTIVATED", "1988-02-26", "ACTIVATED");
+
+        Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(()-> user.updateUser("jyb0226", "4321", "jyb0226@test.com", "Glenn", "늦은오후하늘에노을과구름", "ACTIVATED", "1988-02-26", "INACTIVATED"));
+    }
 }

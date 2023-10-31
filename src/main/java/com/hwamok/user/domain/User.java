@@ -27,23 +27,28 @@ public class User {
     @Column(length = 30)
     private String password;
 
-    @Column(length = 50)
+    @Column(length = 30)
     private String email;
 
     private String nickname;
 
+    @Column(length = 10)
     private String name;
 
     @Column
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private UserStatus userStatus;
 
     @Temporal(TemporalType.DATE)
      private Date birthday;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
     private Instant createdAt=Instant.now(); // now() 현재 시간으로 반환
 
-    public User(String loginId, String password, String email, String nickname, String name,long loginDate, String birthday) throws ParseException {
+    public User(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday, String accountActive) throws ParseException {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -59,15 +64,16 @@ public class User {
         this.email = email;
         this.nickname = nickname;
         this.name = name;
-        this.status = UserStatus.of(loginDate); // Active or InActive
+        this.userStatus = UserStatus.of(userStatus); // Active or InActive
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = format.parse(birthday);
 
         this.birthday = date;
+        this.accountStatus = AccountStatus.of(accountActive);
     }
 
-    public void updateUser(String loginId, String password, String email, String nickname, String name,long loginDate, String birthday) throws ParseException {
+    public void updateUser(String loginId, String password, String email, String nickname, String name,String userStatus, String birthday, String accountActive) throws ParseException {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -83,11 +89,18 @@ public class User {
         this.email = email;
         this.nickname = nickname;
         this.name = name;
-        this.status = UserStatus.of(loginDate); // Active or InActive
+        this.userStatus = UserStatus.of(userStatus); // Active or InActive
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = format.parse(birthday);
+
         this.birthday = date;
+        this.accountStatus = AccountStatus.of(accountActive);
+
+    }
+
+    public void withdraw() {
+        this.accountStatus=AccountStatus.INACTIVATED;
     }
 }
 //유저 엔티티

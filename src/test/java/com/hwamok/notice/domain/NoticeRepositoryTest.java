@@ -64,7 +64,7 @@ class NoticeRepositoryTest {
 
 //        assertThat(notice.getId()).isNotNull();
         assertThatIllegalArgumentException()
-                .isThrownBy(() ->noticeRepository.save(new Notice("제목", "본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본")));
+                .isThrownBy(() ->noticeRepository.save(createNotice("제목", "본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본문본")));
     }
 
 

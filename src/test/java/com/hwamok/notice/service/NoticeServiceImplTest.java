@@ -1,5 +1,6 @@
 package com.hwamok.notice.service;
 
+import com.hwamok.core.exception.HwamokException;
 import com.hwamok.core.exception.HwamokExceptionTest;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
@@ -58,12 +59,18 @@ class NoticeServiceImplTest {
 //                .isThrownBy(()-> noticeRepository.save(new Notice("", "본문")));
         // 내가 원하는 커스텀 익셉션이 발생했는 지 정확히 확인할 수 있다.
 
+        // Notice Entity에 아래 코드를 추가
+        // HwamokException.validate(Strings.isNotBlank(title), ExceptionCode.REQUIRED_PARAMETER);
+
+
     }
 
     @Test
     void 공지사항_생성_실패_제목이_빈값_() {
-        Notice notice = noticeRepository.save(new Notice("", "본문"));
-        assertThat(notice.getId()).isNotNull();
+//        Notice notice = noticeRepository.save(new Notice("", "본문"));
+//        assertThat(notice.getId()).isNotNull();
+
+        assertThatIllegalArgumentException().isThrownBy(()->noticeRepository.save(createNotice("", "본문")));
     }
 
     @Test
@@ -71,20 +78,20 @@ class NoticeServiceImplTest {
         // 공지사항을 조회하고 싶음
         Notice notice = noticeRepository.save(createNotice());
 
-        Notice foundNotice = noticeService.getNotice(notice.getId());
+        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
 
         Assertions.assertThat(foundNotice.getId()).isEqualTo(notice.getId());
     }
 
     @Test
     void 공지사항_단건_조회_실패_공지사항이_존재하지_않음() {
-        Notice notice = noticeRepository.save(new Notice("제목", "본문"));
+       Notice notice = noticeRepository.save(createNotice());
 
-//        Notice foundNoticeId = noticeService.getNotice(-1L);
+//        Notice foundNoticeId = noticeRepository.findById(-1L).orElseThrow();
 //
 //        assertThat(foundNoticeId.getId()).isEqualTo(notice.getId());
-        assertThatHwamokException(NOT_FOUND_NOTICE)
-                .isThrownBy(() -> noticeService.getNotice(-1L));
+        HwamokExceptionTest.assertThatHwamokException(NOT_FOUND_NOTICE)
+                .isThrownBy(() -> noticeRepository.findById(-1L).orElseThrow(() -> new HwamokException(NOT_FOUND_NOTICE)));
         // -1L 절대 존재하지 않는 값을 넣어서 실패의 조건을 만든다.
     }
 
@@ -102,10 +109,10 @@ class NoticeServiceImplTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void 공지사항_생성_실패__제목이_빈값_혹은_null(String title) {
+    void 공지사항_수정_실패__제목이_빈값_혹은_null(String title) {
         Notice notice = noticeRepository.save(createNotice());
 
-        Notice foundNotice = noticeService.getNotice(notice.getId());
+        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
 
         assertThatIllegalArgumentException().isThrownBy(() -> noticeService.update(foundNotice.getId(),title,"수정된 내용"));
 
@@ -113,10 +120,10 @@ class NoticeServiceImplTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void 공지사항_생성_실패__내용이_빈값_혹은_null(String content) {
+    void 공지사항_수정_실패__내용이_빈값_혹은_null(String content) {
         Notice notice = noticeRepository.save(createNotice());
 
-        Notice foundNotice = noticeService.getNotice(notice.getId());
+        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
 
         assertThatIllegalArgumentException().isThrownBy(() -> noticeService.update(foundNotice.getId(),"수정된 제목",content));
     }
@@ -125,7 +132,7 @@ class NoticeServiceImplTest {
     void 공지사항_수정_실패_제목이_11글자_이상() {
         Notice notice = noticeRepository.save(createNotice());
 
-        Notice foundNotice = noticeService.getNotice(notice.getId());
+        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> noticeService.update(foundNotice.getId(), "수정된제목수정된제목수", "수정된 본문"));
@@ -135,7 +142,7 @@ class NoticeServiceImplTest {
     void 공지사항_수정_실패_내용이_50글자_이상() {
         Notice notice = noticeRepository.save(createNotice());
 
-        Notice foundNotice = noticeService.getNotice(notice.getId());
+        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> noticeService.update(foundNotice.getId(), "수정된 제목", "수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문수정된본문본"));
