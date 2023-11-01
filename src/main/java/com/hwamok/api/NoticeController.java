@@ -4,6 +4,7 @@ import com.hwamok.api.dto.notice.NoticeCreateDto;
 import com.hwamok.api.dto.notice.NoticeUpdateDto;
 import com.hwamok.core.response.ApiResult;
 import com.hwamok.core.response.Result;
+import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor // lombok의 어노테이션의 하나로 생성자를 자동으로 주입해 준다.
 // @RequiredArgsConstructor은 클래스에 선언된 final 변수들, 필드들을 매개변수로 하는 생성자를 자동으로 생성해 준다.
 public class NoticeController {
-    @Autowired
+
     private final NoticeService noticeService;
 
 
@@ -39,14 +40,14 @@ public class NoticeController {
         // 이때 본문에 담기는 데이터 형식은 여러가지 형태가 있겠지만 가장 대표적으로 사용되는 것이 JSON 이다.
         // JSON 데이터 형태 { "name" : "Jones", "age" : "42" , "city" : "New York" }
         // 즉, 비동기식 클라-서버 통신을 위해 JSON 형식의 데이터를 주고받는 것이다.
-        noticeService.create(request.getTitle(), request.getContent());
-        return Result.created();
+        Notice notice = noticeService.create(request.getTitle(), request.getContent());
+        return Result.created(notice);
 
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResult<?>> updateNoice(@PathVariable Long id, @RequestBody NoticeUpdateDto.Request dto) {
         noticeService.update(id, dto.getTitle(), dto.getContent());
-        return Result.ok(dto.getTitle());
+        return Result.ok(dto);
     }
 }

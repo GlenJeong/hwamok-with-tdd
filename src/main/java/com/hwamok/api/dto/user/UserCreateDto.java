@@ -27,8 +27,17 @@ public class UserCreateDto {
 
         private String birthday;
 
-        public void encodePwd(String password) {
-            this.password = password;
+        @Override
+        public String toString() {
+            return "Request{" +
+                    "loginId='" + loginId + '\'' +
+                    ", password='" + password + '\'' +
+                    ", email='" + email + '\'' +
+                    ", nickname='" + nickname + '\'' +
+                    ", name='" + name + '\'' +
+                    ", userStatus='" + userStatus + '\'' +
+                    ", birthday='" + birthday + '\'' +
+                    '}';
         }
     }
 }

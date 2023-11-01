@@ -37,6 +37,7 @@ public class NoticeServiceImpl implements NoticeService{
         Notice notice = noticeRepository.findById(id).orElseThrow(() -> new HwamokException(NOT_FOUND_NOTICE));
         notice.update(title, content);
 
+        System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         return notice;
     }
 }

@@ -3,11 +3,14 @@ package com.hwamok.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hwamok.api.dto.user.UserCreateDto;
+import com.hwamok.api.dto.user.UserUpdateDto;
+import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
 import com.hwamok.user.domain.User;
 import com.hwamok.user.domain.UserRepository;
 import com.hwamok.user.service.UserService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static fixtures.NoticeFixture.createNotice;
+import static fixtures.UserFixture.createUser;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,27 +51,17 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    @MockBean
-    private UserService userService;
-
-    @Test
-    void PwdEnc() {
-        String pwd ="1234";
-        String encodePwd = passwordEncoder.encode(pwd);
-        System.out.println("encodePwd = " + encodePwd);
-
-        Assertions.assertThat(encodePwd).isNotNull();
+    User user;
+    @BeforeEach
+    void setUp() throws Exception {
+        user = userRepository.save(new User("jyb1624", passwordEncoder.encode("1234"), "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
     }
+
 
     @Test
     void 회원_가입_성공() throws Exception {
 
-        UserCreateDto.Request request = new UserCreateDto.Request("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
-
-        String pwd = request.getPassword();
-        System.out.println("request.getPassword() = " + request.getPassword());
-        String encodePwd = passwordEncoder.encode(pwd);
-        System.out.println("encodePwd = " + encodePwd);
+        UserCreateDto.Request request = new UserCreateDto.Request("jyb1624", passwordEncoder.encode("1234"), "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
 
         mockMvc.perform(post("/user")
                         // 해당 url로 요청을 한다.
@@ -87,15 +82,52 @@ class UserControllerTest {
     }
 
     @Test
-    void 회원_탈퇴_성공() throws Exception {
+    void 회원_단건_정보_조회() throws Exception {
 
-        UserCreateDto.Request request = new UserCreateDto.Request("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
+        mockMvc.perform(get("/user/userOne/{id}", user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(user)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpectAll(
+                  jsonPath("code").value("S000"),
+                  jsonPath("message").value("success")
+                );
 
-        mockMvc.perform(get("/user/withdraw")
+    }
+
+    @Test
+    void 회원_수정_성공() throws Exception {
+
+        UserCreateDto.Request request = new UserCreateDto.Request("jyb005222", passwordEncoder.encode("1234"), "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
+
+        mockMvc.perform(patch("/user/updateProfile/{id}", user.getId())
                         // 해당 url로 요청을 한다.
                         .contentType(MediaType.APPLICATION_JSON)
                         // Json 타입으로 지정
                         .content(objectMapper.writeValueAsBytes(request)))
+                // 내용 등록, writeValueAsBytes(변환할 객체): Java 객체를 JSON 형식으로 변환
+                // Java 오브젝트로 부터 JSON을 만들고 이를 Byte 배열로 반환
+                .andDo(print())
+                // 응답값 print
+                .andExpect(status().isOk())
+                // 응답 200, 객체를 검증하는 곳, isOk 200, isCreated 201
+                // 응답 status를 ok로 테스트
+                .andExpectAll(
+                        jsonPath("code").value("S000"),
+                        jsonPath("message").value("success")
+                );
+
+    }
+
+    @Test
+    void 회원_탈퇴_성공() throws Exception {
+
+        mockMvc.perform(delete("/user/withdraw/{id}", user.getId())
+                        // 해당 url로 요청을 한다.
+                        .contentType(MediaType.APPLICATION_JSON)
+                        // Json 타입으로 지정
+                        .content(objectMapper.writeValueAsBytes(user)))
                 // 내용 등록, writeValueAsBytes(변환할 객체): Java 객체를 JSON 형식으로 변환
                 // Java 오브젝트로 부터 JSON을 만들고 이를 Byte 배열로 반환
                 .andDo(print())

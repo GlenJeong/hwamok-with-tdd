@@ -9,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,7 +20,7 @@ import java.util.Date;
 
 import static com.hwamok.core.exception.HwamokException.validate;
 
-
+@DynamicUpdate
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,7 +33,7 @@ public class User {
     @Column(length = 10)
     private String loginId;
 
-    @Column(length = 30)
+    @Column(length = 256)
     private String password;
 
     @Column(length = 30)
@@ -48,17 +51,19 @@ public class User {
     @Temporal(TemporalType.DATE)
      private Date birthday;
 
+    @UpdateTimestamp
+    private Instant updateAt=Instant.now();
 
+    @CreationTimestamp
     private Instant createdAt=Instant.now(); // now() 현재 시간으로 반환
 
-    public User(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws ParseException {
+    public User(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
         Preconditions.require(Strings.isNotBlank(email));
         Preconditions.require(Strings.isNotBlank(name));
         Preconditions.require(loginId.length() <= 10 );
-        Preconditions.require(password.length() <= 30 );
         Preconditions.require(email.length() <= 30 );
         Preconditions.require(name.length() <= 10 );
 
@@ -79,16 +84,19 @@ public class User {
         this.birthday = date;
     }
 
-    public void updateUser(String loginId, String password, String email, String nickname, String name,String userStatus, String birthday) throws ParseException {
+    public void updateUser(String loginId, String password, String email, String nickname, String name,String userStatus, String birthday) throws Exception {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
         Preconditions.require(Strings.isNotBlank(email));
         Preconditions.require(Strings.isNotBlank(name));
         Preconditions.require(loginId.length() <= 10 );
-        Preconditions.require(password.length() <= 30 );
         Preconditions.require(email.length() <= 30 );
         Preconditions.require(name.length() <= 10 );
+
+//        validate(
+//                RegexUtil.matches(password, RegexType.PASSWORD),
+//                ExceptionCode.ERROR_SYSTEM);
 
         this.loginId = loginId;
         this.password = password;
@@ -101,11 +109,13 @@ public class User {
         Date date = format.parse(birthday);
 
         this.birthday = date;
-
     }
 
-    public void withdraw() {
-        this.userStatus=UserStatus.INACTIVATED;
+    public void withdraw() throws Exception {
+
+        this.userStatus = UserStatus.INACTIVATED; // Active or InActive
+
+
     }
 }
 //유저 엔티티

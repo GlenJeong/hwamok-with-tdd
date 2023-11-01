@@ -1,8 +1,5 @@
 package com.hwamok.user.domain;
 
-import java.util.Calendar;
-import java.util.Date;
-
 public enum UserStatus {
 
     // 이넘 명은 대문자로 사용한다.

@@ -12,7 +12,7 @@ import java.text.ParseException;
 class UserTest {
 
     @Test
-    void 회원_가입_성공() throws ParseException {
+    void 회원_가입_성공() throws Exception {
         // userStatus = 회원 활성화, 계정 휴면
         // accountStatus = 계정 활성화, 계정 탈퇴
 
@@ -51,7 +51,6 @@ class UserTest {
     @Test
     void 회원_탈퇴_성공() throws Exception {
         User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
-        System.out.println("withdraw user.getAccountStatus() = " + user.getUserStatus());
         Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
 
         user.withdraw();
@@ -65,8 +64,6 @@ class UserTest {
         Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.INACTIVATED);
         Assertions.assertThat(user.getBirthday()).isEqualTo("1988-02-26");
 
-        System.out.println("withdraw user.getAccountStatus() = " + user.getUserStatus());
-        Assertions.assertThat(user.getUserStatus()).isEqualTo(UserStatus.INACTIVATED);
     }
 
 
@@ -164,16 +161,6 @@ class UserTest {
 
     }
 
-    @Test
-    void 회원_가입_실패_password_31글자_이상() throws Exception {
-
-//        User user = new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
-//        Assertions.assertThat(user.getPassword()).isEqualTo("123456789101234567891012345678910");
-
-        Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()->new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
-
-    }
 
     @Test
     void 회원_가입_실패_email_31글자_이상()throws Exception {
@@ -216,7 +203,7 @@ class UserTest {
         // user.updateUser("jyb1624", password, "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
 
         Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> user.updateUser("jyb0226", password, "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26"));
+                .isThrownBy(()-> user.updateUser("jyb1624", password, "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26"));
     }
 
     @ParameterizedTest
@@ -251,15 +238,6 @@ class UserTest {
                 .isThrownBy(()-> user.updateUser("jybjyb02260226", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
     }
 
-    @Test
-    void 회원_수정_실패_password_31글자_이상() throws Exception {
-        User user = new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
-
-        // user.updateUser("jyb0226", "109876543211098765432110987654321", "jyb0226@test.com", "InBeom", "인범", "ACTIVATED", "1988-02-26", "ACTIVATED");
-
-        Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(()-> user.updateUser("jyb0226", "109876543211098765432110987654321", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
-    }
 
     @Test
     void 회원_수정_실패_email_31글자_이상() throws Exception {

@@ -31,7 +31,6 @@ class UserRepositoryTest {
         assertThat(user.getName()).isEqualTo("정인범");
         assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
         assertThat(user.getBirthday()).isEqualTo("1988-02-26");
-        assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
 
     }
 
@@ -86,15 +85,6 @@ class UserRepositoryTest {
         assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
     }
 
-    @Test
-    void 회원_가입_실패_password_31글자() throws Exception {
-        // User user = userRepository.save(new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
-
-        //        assertThat(user.getId()).isNotNull();
-
-        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
-
-    }
 
     @Test
     void 회원_가입_실패_email_31글자() throws Exception {
