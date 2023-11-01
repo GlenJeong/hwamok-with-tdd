@@ -1,4 +1,4 @@
-package com.hwamok.fixtures;
+package fixtures;
 
 import com.hwamok.notice.domain.Notice;
 

@@ -23,9 +23,10 @@ public enum ExceptionCode { // enum을 사용할 때는 값이 바뀌지 않을 
     INVALID_NOTICE("E002", " 공지사항 작성 중 에러가 발생하였습니다."),
 
     NOT_FOUND_NOTICE("E003", "공지사항을 찾을 수가 없습니다."),
+    FAILED_TO_MODIFY_NOTICE("E004", "공지사항을 수정하지 못 했습니다."),
+    NOT_FOUND_USER("E005", "유저를 찾을 수가 없습니다."),
 
-    FAILED_TO_MODIFY_NOTICE("E004", "공지사항을 수정하지 못 했습니다.");
-
+    FAIL_LOGIN_REQUEST("E006", "아이디 또는 패스워드를 확인해주세요.");
 
     private final String code; // final 재할당을 금지하는 것
     private final String message; // 선언

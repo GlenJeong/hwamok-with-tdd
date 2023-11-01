@@ -21,7 +21,7 @@ class UserRepositoryTest {
 
     @Test
     void 회원_가입_성공() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
 
         assertThat(user.getId()).isNotNull();
         assertThat(user.getLoginId()).isEqualTo("jyb1624");
@@ -31,13 +31,36 @@ class UserRepositoryTest {
         assertThat(user.getName()).isEqualTo("정인범");
         assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
         assertThat(user.getBirthday()).isEqualTo("1988-02-26");
-        assertThat(user.getAccountStatus()).isEqualTo(AccountStatus.ACTIVATED);
+        assertThat(user.getUserStatus()).isEqualTo(UserStatus.ACTIVATED);
+
+    }
+
+
+    @Test
+    void 회원_단건_조회_성공() throws Exception {
+        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
+
+        User foundUserId = userRepository.findById(user.getId()).orElseThrow();
+
+        assertThat(foundUserId.getId()).isEqualTo(user.getId());
+
+
+    }
+
+    @Test
+    void 회원_단건_조회_성공_존재하지_않는_회원() throws Exception {
+        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
+
+        // User foundUserId = userRepository.findById(-1L).orElseThrow(()->new IllegalArgumentException());
+
+        assertThatIllegalArgumentException().isThrownBy(()->userRepository.findById(-1L).orElseThrow(()->new IllegalArgumentException()));
+
 
     }
 
     @Test
     void 회원_탈퇴_성공() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
+        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
 
         User foundUserId = userRepository.findByLoginId(user.getLoginId()).orElseThrow();
 
@@ -53,28 +76,6 @@ class UserRepositoryTest {
 
     }
 
-    @Test
-    void 회원_단건_조회_성공() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
-
-        User foundUserId = userRepository.findById(user.getId()).orElseThrow();
-
-        assertThat(foundUserId.getId()).isEqualTo(user.getId());
-
-
-    }
-
-    @Test
-    void 회원_단건_조회_성공_존재하지_않는_회원() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED"));
-
-        // User foundUserId = userRepository.findById(-1L).orElseThrow(()->new IllegalArgumentException());
-
-        assertThatIllegalArgumentException().isThrownBy(()->userRepository.findById(-1L).orElseThrow(()->new IllegalArgumentException()));
-
-
-    }
-
 
     @Test
     void 회원_가입_실패_loginId_11글자() throws Exception {
@@ -82,7 +83,7 @@ class UserRepositoryTest {
 
 //        assertThat(user.getId()).isNotNull();
 
-        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED")));
+        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624jyb1624", "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
     }
 
     @Test
@@ -91,7 +92,7 @@ class UserRepositoryTest {
 
         //        assertThat(user.getId()).isNotNull();
 
-        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED")));
+        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624", "123456789101234567891012345678910", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
 
     }
 
@@ -101,7 +102,7 @@ class UserRepositoryTest {
 
         //        assertThat(user.getId()).isNotNull();
 
-        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624", "1234", "jyb1624jyb1624jyb16241234@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED")));
+        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624", "1234", "jyb1624jyb1624jyb16241234@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
 
     }
 
@@ -111,7 +112,7 @@ class UserRepositoryTest {
 
         //        assertThat(user.getId()).isNotNull();
 
-        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "선선한바람이코끝을스치며", "ACTIVATED", "1988-02-26", "ACTIVATED")));
+        assertThatIllegalArgumentException().isThrownBy(()->userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", "선선한바람이코끝을스치며", "ACTIVATED", "1988-02-26")));
 
     }
 
@@ -123,7 +124,7 @@ class UserRepositoryTest {
         //        assertThat(user.getId()).isNotNull();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(()->userRepository.save(new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED")));
+                .isThrownBy(()->userRepository.save(new User(loginId, "1234", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
 
 
     }
@@ -136,7 +137,7 @@ class UserRepositoryTest {
         //        assertThat(user.getId()).isNotNull();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(()->userRepository.save(new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED")));
+                .isThrownBy(()->userRepository.save(new User("jyb1624", password, "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
 
 
     }
@@ -149,7 +150,7 @@ class UserRepositoryTest {
         //        assertThat(user.getId()).isNotNull();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(()->userRepository.save(new User("jyb1624", "1234", email, "Glenn", "정인범", "ACTIVATED", "1988-02-26", "ACTIVATED")));
+                .isThrownBy(()->userRepository.save(new User("jyb1624", "1234", email, "Glenn", "정인범", "ACTIVATED", "1988-02-26")));
 
 
     }
@@ -162,7 +163,7 @@ class UserRepositoryTest {
         //        assertThat(user.getId()).isNotNull();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(()->userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, "ACTIVATED", "1988-02-26", "ACTIVATED")));
+                .isThrownBy(()->userRepository.save(new User("jyb1624", "1234", "jyb1624@test.com", "Glenn", name, "ACTIVATED", "1988-02-26")));
 
 
     }

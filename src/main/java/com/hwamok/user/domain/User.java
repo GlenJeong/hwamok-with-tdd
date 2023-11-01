@@ -1,6 +1,9 @@
 package com.hwamok.user.domain;
 
 import com.hwamok.core.Preconditions;
+import com.hwamok.core.exception.ExceptionCode;
+import com.hwamok.util.RegexType;
+import com.hwamok.util.RegexUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,6 +14,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
+
+import static com.hwamok.core.exception.HwamokException.validate;
+
 
 @Entity
 @Getter
@@ -42,13 +48,10 @@ public class User {
     @Temporal(TemporalType.DATE)
      private Date birthday;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private AccountStatus accountStatus;
 
     private Instant createdAt=Instant.now(); // now() 현재 시간으로 반환
 
-    public User(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday, String accountActive) throws ParseException {
+    public User(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws ParseException {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -58,6 +61,10 @@ public class User {
         Preconditions.require(password.length() <= 30 );
         Preconditions.require(email.length() <= 30 );
         Preconditions.require(name.length() <= 10 );
+
+//        validate(
+//                RegexUtil.matches(password, RegexType.PASSWORD),
+//                ExceptionCode.ERROR_SYSTEM);
 
         this.loginId = loginId;
         this.password = password;
@@ -70,10 +77,9 @@ public class User {
         Date date = format.parse(birthday);
 
         this.birthday = date;
-        this.accountStatus = AccountStatus.of(accountActive);
     }
 
-    public void updateUser(String loginId, String password, String email, String nickname, String name,String userStatus, String birthday, String accountActive) throws ParseException {
+    public void updateUser(String loginId, String password, String email, String nickname, String name,String userStatus, String birthday) throws ParseException {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -95,12 +101,11 @@ public class User {
         Date date = format.parse(birthday);
 
         this.birthday = date;
-        this.accountStatus = AccountStatus.of(accountActive);
 
     }
 
     public void withdraw() {
-        this.accountStatus=AccountStatus.INACTIVATED;
+        this.userStatus=UserStatus.INACTIVATED;
     }
 }
 //유저 엔티티

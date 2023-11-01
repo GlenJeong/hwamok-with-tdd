@@ -1,16 +1,11 @@
 package com.hwamok.notice.domain;
 
-import org.aspectj.weaver.ast.Not;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-import java.time.Instant;
-
-import static com.hwamok.fixtures.NoticeFixture.createNotice;
+import static fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class NoticeTest {
     // 알트 인설틑 테스트 코딩 자동 완성

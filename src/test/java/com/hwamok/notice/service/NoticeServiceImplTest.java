@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.hwamok.core.exception.ExceptionCode.*;
-import static com.hwamok.core.exception.HwamokExceptionTest.assertThatHwamokException;
-import static com.hwamok.fixtures.NoticeFixture.createNotice;
+import static fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 

@@ -10,9 +10,11 @@ import java.util.Calendar;
 
 public interface UserService {
 
-    User create(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday, String accountActive) throws ParseException;
+    User create(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception;
 
     User getUser(String loginId);
 
-    User updateProfile(long id, String loginId, String password, String email, String nickname, String name, String userStatus, String birthday, String accountActive) throws ParseException;
+    User updateProfile(long id, String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception;
+
+    void withdraw(String loginId);
 }

@@ -1,0 +1,15 @@
+package com.hwamok.api.dto.auth;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+public class LoginDto {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Request {
+        private String loginId;
+        private String password;
+    }
+}

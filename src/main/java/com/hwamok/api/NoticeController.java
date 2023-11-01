@@ -47,6 +47,6 @@ public class NoticeController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResult<?>> updateNoice(@PathVariable Long id, @RequestBody NoticeUpdateDto.Request dto) {
         noticeService.update(id, dto.getTitle(), dto.getContent());
-        return Result.ok();
+        return Result.ok(dto.getTitle());
     }
 }

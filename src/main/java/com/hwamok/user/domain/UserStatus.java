@@ -4,8 +4,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 public enum UserStatus {
-    ACTIVATED("ACTIVATED", "활성화"),
-    INACTIVATED("INACTIVATED", "비활성화");
+
+    // 이넘 명은 대문자로 사용한다.
+    // 대문자로 바꿀 때 컨트로 쉬프트 U
+    ACTIVATED("ACTIVATED", "회원"),
+    INACTIVATED("INACTIVATED", "회원탈퇴");
 
     private String code;
     private String desc;
