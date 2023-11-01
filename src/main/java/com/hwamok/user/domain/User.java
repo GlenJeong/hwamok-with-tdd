@@ -20,7 +20,8 @@ import java.util.Date;
 
 import static com.hwamok.core.exception.HwamokException.validate;
 
-@DynamicUpdate
+@DynamicUpdate // 변경된 컬럼만 업데이트함,
+// 매번 전체 업데이트 된다면 쿼리문을 보고 어떤 쿼리가 업데이트 되었는 지 확인하기가 힘듬
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
