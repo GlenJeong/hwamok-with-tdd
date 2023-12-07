@@ -55,15 +55,4 @@ jobs:
           gradle-version: wrapper
           arguments: test
 
-      # job 결과를 slack으로 알려줌
-      - name: send slack message
-        uses: 8398a7/action-slack@v3
-        if: failure()
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,author,ref,workflow,took
-          author_name: ''
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          MATRIX_CONTEXT: ${{ toJson(matrix) }}
 
