@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/hwamok-test
     username: root
-    password: 1234
+    password: ${db.password:1234}
   jpa:
     hibernate:
       ddl-auto: create # 한번 만들었다가 삭제함
