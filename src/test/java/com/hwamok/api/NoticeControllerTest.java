@@ -1,18 +1,10 @@
 package com.hwamok.api;
 
-import com.epages.restdocs.apispec.ResourceDocumentation;
-import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
-import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goyounha11.docs.DocsUtil;
-import com.hwamok.api.dto.auth.LoginDto;
 import com.hwamok.api.dto.notice.NoticeCreateDto;
 import com.hwamok.api.dto.notice.NoticeUpdateDto;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
-import com.hwamok.user.domain.User;
-import com.hwamok.user.domain.UserRepository;
-import fixtures.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,21 +14,15 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -131,35 +117,7 @@ class NoticeControllerTest {
                         .andExpectAll(
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
-                )
-                .andDo(document("/notice",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        ResourceDocumentation.resource(
-                                new ResourceSnippetParametersBuilder()
-                                        .tag("Notice")
-                                        .description("공지사항 생성 API")
-                                        .requestFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
-                                                        PayloadDocumentation.fieldWithPath("content").type(JsonFieldType.STRING).description("본문")
-                                                )
-                                        )
-                                        .responseFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
-                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
-                                                        PayloadDocumentation.fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(2),
-                                                        PayloadDocumentation.fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
-                                                        PayloadDocumentation.fieldWithPath("data.content").type(JsonFieldType.STRING).description("본문"),
-                                                        PayloadDocumentation.fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("The timestamp when the data was created")
-                                                )
-                                        )
-                                        .requestSchema(Schema.schema("NoticeCreateDto.Request"))
-                                        .responseSchema(Schema.schema("NoticeCreateDto.Response"))
-                                        .build()
-                        )
-                ));
+                        );
 
 ////        Forwarded URL = null return "notice"; forward 방식
 ////        Redirected URL = null
