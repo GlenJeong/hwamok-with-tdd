@@ -6,7 +6,7 @@ spring:
     password: ${db.password:1234}
   jpa:
     hibernate:
-      ddl-auto: create # 한번 만들었다가 삭제함
+      ddl-auto: create-drop # 한번 만들었다가 삭제함
     properties:
       hibernate:
         format_sql: true
