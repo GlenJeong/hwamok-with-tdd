@@ -102,33 +102,7 @@ class AuthControllerTest {
                         jsonPath("message").value("success"),
                         jsonPath("data.accessToken").isNotEmpty(),
                         jsonPath("data.refreshToken").isNotEmpty()
-                )
-                .andDo(document("/auth/login",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        ResourceDocumentation.resource(
-                                new ResourceSnippetParametersBuilder()
-                                        .tag("Auth")
-                                        .description("로그인 API")
-                                        .requestFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("loginId").type(JsonFieldType.STRING).description("jiy88226"),
-                                                        PayloadDocumentation.fieldWithPath("password").type(JsonFieldType.STRING).description("q1w2e3r4t5")
-                                                        )
-                                        )
-                                        .responseFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
-                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
-                                                        PayloadDocumentation.fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("access Token"),
-                                                        PayloadDocumentation.fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("refresh Token")
-                                                        )
-                                        )
-                                        .requestSchema(Schema.schema("LoginDto.Request"))
-                                        .responseSchema(Schema.schema("LoginDto.Response"))
-                                        .build()
-                        )
-                ));
+                );
 //                .andDo(document("/auth/login",
 //                        preprocessRequest(prettyPrint()),
 //                        preprocessResponse(prettyPrint())
@@ -151,15 +125,6 @@ class AuthControllerTest {
                         jsonPath("message").value("success"),
                         jsonPath("data.accessToken").isNotEmpty(),
                         jsonPath("data.refreshToken").isNotEmpty()
-                );
-
-        resultActions.andDo(
-                        DocsUtil.createDocs(
-                                "Auth2",
-                                "Auth/login2",
-                                "로그인 자동화 API",
-                                resultActions
-                                )
                 );
     }
 }

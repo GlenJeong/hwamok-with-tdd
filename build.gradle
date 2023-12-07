@@ -35,7 +35,7 @@ dependencies {
 
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 
-    implementation 'io.github.goyounha11:automatedAPIDocsUtil:0.0.2'
+//    implementation 'io.github.goyounha11:automatedAPIDocsUtil:0.0.2'
 
     // asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     swaggerCodegen "io.swagger.codegen.v3:swagger-codegen-cli:3.0.44"

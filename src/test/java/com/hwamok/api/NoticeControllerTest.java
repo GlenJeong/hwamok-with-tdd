@@ -131,35 +131,7 @@ class NoticeControllerTest {
                         .andExpectAll(
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
-                )
-                .andDo(document("/notice",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        ResourceDocumentation.resource(
-                                new ResourceSnippetParametersBuilder()
-                                        .tag("Notice")
-                                        .description("공지사항 생성 API")
-                                        .requestFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
-                                                        PayloadDocumentation.fieldWithPath("content").type(JsonFieldType.STRING).description("본문")
-                                                )
-                                        )
-                                        .responseFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
-                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
-                                                        PayloadDocumentation.fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(2),
-                                                        PayloadDocumentation.fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
-                                                        PayloadDocumentation.fieldWithPath("data.content").type(JsonFieldType.STRING).description("본문"),
-                                                        PayloadDocumentation.fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("The timestamp when the data was created")
-                                                )
-                                        )
-                                        .requestSchema(Schema.schema("NoticeCreateDto.Request"))
-                                        .responseSchema(Schema.schema("NoticeCreateDto.Response"))
-                                        .build()
-                        )
-                ));
+                        );
 
 ////        Forwarded URL = null return "notice"; forward 방식
 ////        Redirected URL = null
