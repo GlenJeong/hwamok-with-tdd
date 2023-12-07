@@ -1,9 +1,11 @@
-plugins {
+plugins { // 어떤 작업 단위를 미리 만들어 놓은 것. 관련된 작업들이 사용 가능해짐
     id 'java'
     id 'org.springframework.boot' version '3.1.4'
     id 'io.spring.dependency-management' version '1.1.3'
+    // id 'org.asciidoctor.jvm.convert' version '3.3.2' // 문서 restDocs 관련된 작업을 할 수 있게 해줌
+    id 'com.epages.restdocs-api-spec' version '0.18.2'
+    id "org.hidetake.swagger.generator" version "2.19.2"
     id 'java-test-fixtures' // fixture 사용하기 위해서 추가
-
 }
 
 group = 'com.hwamok'
@@ -14,6 +16,7 @@ java {
 }
 
 configurations {
+    // asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -27,23 +30,90 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security' // spring security
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 
+    implementation files("libs/automatedRestDocs.jar")
+
+    // asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    swaggerCodegen "io.swagger.codegen.v3:swagger-codegen-cli:3.0.44"
+    swaggerUI "org.webjars:swagger-ui:3.52.1"
+
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+
+    testImplementation 'org.projectlombok:lombok:1.18.26'
 
 
     compileOnly 'org.springframework.boot:spring-boot-starter-test' // main 프로젝트에서 사용해야 해서 test 관련
     // 어노테이션이 필요해서 추가함
+    compileOnly 'org.springframework.restdocs:spring-restdocs-mockmvc'
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     annotationProcessor 'org.projectlombok:lombok'
 
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.2'
     testImplementation 'org.springframework.security:spring-security-test'
 
 }
 
+/* ext {
+    snippertsDir = file("${buildDir}/generated-snippets")
+}
+
+asciidoctor{
+    dependsOn test
+    configurations 'asciidoctorExt'
+    inputs.dir snippertsDir
+}*/
+
+// kotlin ?: => 엘비스 연산자 -> null이면 뒤에꺼 실행
+def activeProfile = project.findProperty("spring.profiles.active") ?: "local"
+
+openapi3 {
+    servers = [{ url = getServerUrl(activeProfile)}]
+    title = "Hwamok API Documentation"
+    description = "Hwamok 서버 문서"
+    version = "0.0.1"
+    format = "json"
+}
+
+swaggerSources {
+    create("convert") {
+        setInputFile(file("$buildDir/api-spec/openapi3.json"))
+        code {
+            language = "html"
+        }
+    }
+}
+
+
+tasks.named('generateSwaggerUIConvert') {
+    dependsOn 'openapi3'
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+// aws S3에 올린 다음 호스팅한다.
+// static/docs/index.html 옮기고 Rounting 한다.
+
+def getServerUrl(profile) {
+    switch (profile) {
+        case "dev":
+            return "http://dev-localhost:8080.com"
+        default:
+            return "http://localhost:8080"
+    }
+
 }

@@ -28,14 +28,14 @@ public class NoticeController {
 
 
     @PostMapping // 스프링에서 제공하는 ResponseEntity를 이용하여 성공, 실패 메시지를 재정의하는 코드를 만든 것.
-    // ApiResult<?> 모든 클래스나 인터페이스 타입 올 수 있다. 어떤 것일 올지 몰라서 <?> 와이일 카드를 사용
+    // ApiResult<?> 모든 클래스나 인터페이스 타입 올 수 있다. 어떤 것이 올지 몰라서 <?> 와이일 카드를 사용
     public ResponseEntity<ApiResult<?>> createNotice(@RequestBody NoticeCreateDto.Request request){ // @RequestBody json을 사용하니까
         // ResponseEntity는 사용자의 HttpRequest에 대한 응답 데이터를 포함하는 클래스
         // @RequestBody를 통해서 자바객체로 conversion을 하는데, 이때 HttpMessageConverter를 사용한다.
         // 스프링에서 비동기 처리를 하는 경우 @RequestBody , @ResponseBody를 사용한다.
         // 웹에서 화면전환(새로고침) 없이 이루어지는 동작들은 대부분 비동기 통신으로 이루어진다.
-        // 비동기통신을 하기위해서는 클라이언트에서 서버로 요청 메세지를 보낼 때, 본문에 데이터를 담아서 보내야 하고,
-        // 서버에서 클라이언트로 응답을 보낼때에도 본문에 데이터를 담아서 보내야 한다.
+        // 비동기통신을 하기위해서는 클라이언트에서 서버로 요청 메세지를 보낼 때, 본문(body)에 데이터를 담아서 보내야 하고,
+        // 서버에서 클라이언트로 응답을 보낼때에도 본문(body)에 데이터를 담아서 보내야 한다.
         // 이 본문이 담기는 곳이 바로 body 이다. 요청본문 requestBody, 응답본문 responseBody 을 담아서 보내야 한다.
         // 이때 본문에 담기는 데이터 형식은 여러가지 형태가 있겠지만 가장 대표적으로 사용되는 것이 JSON 이다.
         // JSON 데이터 형태 { "name" : "Jones", "age" : "42" , "city" : "New York" }
@@ -45,7 +45,7 @@ public class NoticeController {
 
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<ApiResult<?>> updateNoice(@PathVariable Long id, @RequestBody NoticeUpdateDto.Request dto) {
         noticeService.update(id, dto.getTitle(), dto.getContent());
         return Result.ok(dto);

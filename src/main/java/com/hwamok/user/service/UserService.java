@@ -13,5 +13,5 @@ public interface UserService {
 
     User updateProfile(long id, String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception;
 
-    void withdraw(long id) throws Exception;
+    void withdraw(long id);
 }

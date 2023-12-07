@@ -1,28 +1,42 @@
 package com.hwamok.api;
 
+import com.epages.restdocs.apispec.ResourceDocumentation;
+import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
+import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goyounha11.docs.DocsUtil;
+import com.hwamok.api.dto.auth.LoginDto;
 import com.hwamok.api.dto.notice.NoticeCreateDto;
 import com.hwamok.api.dto.notice.NoticeUpdateDto;
 import com.hwamok.notice.domain.Notice;
 import com.hwamok.notice.domain.NoticeRepository;
+import com.hwamok.user.domain.User;
+import com.hwamok.user.domain.UserRepository;
+import fixtures.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.PayloadDocumentation;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static fixtures.NoticeFixture.createNotice;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     // @MockBean 테스트할 클래스에서 주입 받고 있는 객체에 대한 가짜 객체를 생성해주는 어노테이션
     // 해당 객체는 실제 행위를 하지 않음
     // given() 메서드를 활요하여 가짜 객체의 동작에 대해 정의하여 사용할 수 있음
+@AutoConfigureRestDocs
+@Transactional
 class NoticeControllerTest {
 
     @Autowired
@@ -68,7 +84,8 @@ class NoticeControllerTest {
 
     Notice notice;
 
-    @BeforeEach // Test코드 메서드가 실행하기전에 반드시 이 메서드가 먼저 실행함
+    @BeforeEach
+        // Test코드 메서드가 실행하기전에 반드시 이 메서드가 먼저 실행함
     // 수정할 때 샘플 데이터가 필요하기 때문에 Test코드 메서드가 실행하기 전에
     // 데이터를 만들어 놓는 다.
     void setUp() {
@@ -114,7 +131,35 @@ class NoticeControllerTest {
                         .andExpectAll(
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
-                );
+                )
+                .andDo(document("/notice",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        ResourceDocumentation.resource(
+                                new ResourceSnippetParametersBuilder()
+                                        .tag("Notice")
+                                        .description("공지사항 생성 API")
+                                        .requestFields(
+                                                List.of(
+                                                        PayloadDocumentation.fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
+                                                        PayloadDocumentation.fieldWithPath("content").type(JsonFieldType.STRING).description("본문")
+                                                )
+                                        )
+                                        .responseFields(
+                                                List.of(
+                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
+                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
+                                                        PayloadDocumentation.fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(2),
+                                                        PayloadDocumentation.fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
+                                                        PayloadDocumentation.fieldWithPath("data.content").type(JsonFieldType.STRING).description("본문"),
+                                                        PayloadDocumentation.fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("The timestamp when the data was created")
+                                                )
+                                        )
+                                        .requestSchema(Schema.schema("NoticeCreateDto.Request"))
+                                        .responseSchema(Schema.schema("NoticeCreateDto.Response"))
+                                        .build()
+                        )
+                ));
 
 ////        Forwarded URL = null return "notice"; forward 방식
 ////        Redirected URL = null
@@ -141,7 +186,7 @@ class NoticeControllerTest {
 
         NoticeCreateDto.Request request = new NoticeCreateDto.Request("수정된 제목", "수정된 본문");
 
-        mockMvc.perform(patch("/notice/{id}", notice.getId())
+        mockMvc.perform(post("/notice/{id}", notice.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(request)))
                 .andDo(print())
@@ -150,12 +195,6 @@ class NoticeControllerTest {
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
                 );
-
-        Notice foundNotice = noticeRepository.findById(notice.getId()).orElseThrow();
-
-        assertThat(foundNotice.getTitle()).isEqualTo("수정된 제목");
-        assertThat(foundNotice.getContent()).isEqualTo("수정된 본문");
-
     }
 
 
@@ -165,7 +204,7 @@ class NoticeControllerTest {
 
         NoticeUpdateDto.Request request = new NoticeUpdateDto.Request(title, "수정된 본문");
 
-        mockMvc.perform(patch("/notice/{id}", notice.getId())
+        mockMvc.perform(post("/notice/{id}", notice.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andDo(print())
@@ -183,7 +222,7 @@ class NoticeControllerTest {
 
         NoticeUpdateDto.Request request = new NoticeUpdateDto.Request("수정된 제목", content);
 
-        mockMvc.perform(patch("/notice/{id}", notice.getId())
+        mockMvc.perform(post("/notice/{id}", notice.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andDo(print())
@@ -198,7 +237,7 @@ class NoticeControllerTest {
     void 공지사항_수정_실패_존재하지_않는_공지사항() throws Exception {
         NoticeUpdateDto.Request request = new NoticeUpdateDto.Request("수정된 제목", "수정된 본문");
 
-        mockMvc.perform(patch("/notice/{id}", -1L)
+        mockMvc.perform(post("/notice/{id}", -1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andDo(print())

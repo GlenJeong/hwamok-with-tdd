@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static fixtures.NoticeFixture.createNotice;
 import static org.assertj.core.api.Assertions.*;
@@ -17,6 +18,7 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
         //replace=AutoConfigureTestDatabase.Replace가 디폴트로 설정되어 있어, 설정해놓은 DB가 아닌 in-memory DB를 활용해서 테스트가 실행된다.
         //EmbeddedDatabaseConnection 클래스를 보면 H2, DERBY, HSQL, HSQLDB 중 사용 가능한 in-memory DB에 자동으로 컨넥션을 설정하는 것을 확인할 수 있다.
         //replace=AutoConfigureTestDatabase.NONE으로 값을 덮어 씌우면 설정해놓은 DB를 테스트에 사용할 수 있다.
+@Transactional
 class NoticeRepositoryTest {
     @Autowired
     private NoticeRepository noticeRepository;

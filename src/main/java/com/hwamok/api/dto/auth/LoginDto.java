@@ -12,4 +12,12 @@ public class LoginDto {
         private String loginId;
         private String password;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response {
+        private String accessToken;
+        private String refreshToken;
+    }
 }

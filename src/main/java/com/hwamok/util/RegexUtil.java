@@ -3,7 +3,7 @@ package com.hwamok.util;
 public class RegexUtil {
 
     //문자+숫자, 8자이상
-    private static final String PASSWORD_PATTERN = "^(?=.[A-Za-z])(?=.\\d)[A-Za-z\\d]{8,}$";
+    private static final String PASSWORD_PATTERN = " ^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$\n";
     //이메일형식
     private static final String EMAIL_PATTERN = "^[_a-z0-9-]+(.[_a-z0-9-]+)@(?:\\w+\\.)+\\w+$";
     //한글

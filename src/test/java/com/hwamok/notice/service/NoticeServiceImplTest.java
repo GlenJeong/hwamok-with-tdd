@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.hwamok.core.exception.ExceptionCode.*;
 import static fixtures.NoticeFixture.createNotice;
@@ -29,7 +30,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 // WebEnvironment.RANDOM_PORT: 포트가 랜덤으로 지정되어 상용 앱에서 구동되는 것처럼 내장 톰캣이 구동된다.
 // WebEnvironment.DEFINED_PORT: 정의된 포트로 내장톰캣이 구동된다.
 // WebEnvironment.NONE: WebEnvironment.NONE으로 구동된다
-
+@Transactional
 class NoticeServiceImplTest {
 
     @Autowired// @SpringBootTest(webEnvironment = RANDOM_PORT) 사용해야 빨간줄이 사라진다. 그 이유는

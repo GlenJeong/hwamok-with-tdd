@@ -13,12 +13,14 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.hwamok.core.exception.HwamokExceptionTest.assertThatHwamokException;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@Transactional
 class UserServiceImplTest {
     @Autowired
     private UserService userService;
@@ -58,17 +60,17 @@ class UserServiceImplTest {
 //
 //        assertThat(userOne.getLoginId()).isEqualTo(user.getLoginId());
 
-        assertThatHwamokException(ExceptionCode.NOT_FOUND_USER).isThrownBy(()->userRepository.findByLoginId("jyb0226").orElseThrow(()-> new HwamokException(ExceptionCode.NOT_FOUND_USER)));
+        assertThatHwamokException(ExceptionCode.NOT_FOUND_USER).isThrownBy(()->userRepository.findById(-1l).orElseThrow(()-> new HwamokException(ExceptionCode.NOT_FOUND_USER)));
 
     }
 
     @Test
     void 회원_수정_성공() throws Exception {
-        User user = userRepository.save(new User("jyb0120", passwordEncoder.encode("1234"), "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
+        User user = userRepository.save(new User("jyb015420", passwordEncoder.encode("1234"), "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
 
         User foundLoginId = userRepository.findByLoginId(user.getLoginId()).orElseThrow(()-> new HwamokException(ExceptionCode.NOT_FOUND_USER));
 
-        foundLoginId = userService.updateProfile(foundLoginId.getLoginId() , passwordEncoder.encode("4321"), "jyb0226@test.com", "Inbeom", "인범", "INACTIVATED", "1988-02-26");
+        foundLoginId = userService.updateProfile(foundLoginId.getId(), "jyb162245" , passwordEncoder.encode("4321"), "jyb0226@test.com", "Inbeom", "인범", "INACTIVATED", "1988-02-26");
 
         assertThat(foundLoginId.getId()).isNotNull();
         assertThat(foundLoginId.getLoginId()).isEqualTo(user.getLoginId());

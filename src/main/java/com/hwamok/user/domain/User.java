@@ -2,6 +2,7 @@ package com.hwamok.user.domain;
 
 import com.hwamok.core.Preconditions;
 import com.hwamok.core.exception.ExceptionCode;
+import com.hwamok.core.exception.HwamokException;
 import com.hwamok.util.RegexType;
 import com.hwamok.util.RegexUtil;
 import jakarta.persistence.*;
@@ -31,13 +32,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 10)
+    @Column(length = 10, unique = true)
     private String loginId;
 
     @Column(length = 256)
     private String password;
 
-    @Column(length = 30)
+    @Column(length = 30, unique = true)
     private String email;
 
     private String nickname;
@@ -50,7 +51,7 @@ public class User {
     private UserStatus userStatus;
 
     @Temporal(TemporalType.DATE)
-     private Date birthday;
+    private Date birthday;
 
     @UpdateTimestamp
     private Instant updateAt=Instant.now();
@@ -67,10 +68,6 @@ public class User {
         Preconditions.require(loginId.length() <= 10 );
         Preconditions.require(email.length() <= 30 );
         Preconditions.require(name.length() <= 10 );
-
-//        validate(
-//                RegexUtil.matches(password, RegexType.PASSWORD),
-//                ExceptionCode.ERROR_SYSTEM);
 
         this.loginId = loginId;
         this.password = password;
@@ -112,11 +109,9 @@ public class User {
         this.birthday = date;
     }
 
-    public void withdraw() throws Exception {
+    public void withdraw() {
 
         this.userStatus = UserStatus.INACTIVATED; // Active or InActive
-
-
     }
 }
 //유저 엔티티

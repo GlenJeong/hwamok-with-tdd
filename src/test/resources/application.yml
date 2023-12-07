@@ -1,14 +1,30 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/hwamoktest
+    url: jdbc:mysql://localhost:3306/hwamok-test
     username: root
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: create-drop # 한번 만들었다가 삭제함
+      ddl-auto: create # 한번 만들었다가 삭제함
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
+
+jwt:
+  secretKey: hwamokJwtSecretKey20231102PM1057
+
+cloud:
+  aws:
+    s3:
+      bucket: hwamok3
+    credentials:
+      access-key: AKIA5CD3QQSFBDQOIUXL
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
