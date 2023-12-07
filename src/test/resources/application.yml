@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/hwamoktest
+    url: jdbc:mysql://localhost:3306/hwamok-test
     username: root
     password: ${db.password:1234}
   jpa:
