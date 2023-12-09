@@ -1,37 +1,21 @@
 package com.hwamok.api;
 
-import com.epages.restdocs.apispec.ResourceDocumentation;
-import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
-import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goyounha11.docs.DocsUtil;
-import com.hwamok.api.dto.auth.LoginDto;
 import com.hwamok.api.dto.user.UserCreateDto;
 import com.hwamok.api.dto.user.UserUpdateDto;
 import com.hwamok.user.domain.User;
 import com.hwamok.user.domain.UserRepository;
-import fixtures.UserFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Time;
-import java.util.List;
-
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static java.time.LocalTime.now;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -80,37 +64,7 @@ class UserControllerTest {
                 .andExpectAll(
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
-                )
-                .andDo(document("/user",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        ResourceDocumentation.resource(
-                                new ResourceSnippetParametersBuilder()
-                                        .tag("User")
-                                        .description("회원 생성 API")
-                                        .requestFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("loginId").type(JsonFieldType.STRING).description("jyb1624"),
-                                                        PayloadDocumentation.fieldWithPath("password").type(JsonFieldType.STRING).description("q1w2e3r4t5"),
-                                                        PayloadDocumentation.fieldWithPath("email").type(JsonFieldType.STRING).description("jyb1234@test.com"),
-                                                        PayloadDocumentation.fieldWithPath("nickname").type(JsonFieldType.STRING).description("Glenn"),
-                                                        PayloadDocumentation.fieldWithPath("name").type(JsonFieldType.STRING).description("정인범"),
-                                                        PayloadDocumentation.fieldWithPath("userStatus").type(JsonFieldType.STRING).description("ACTIVATED"),
-                                                        PayloadDocumentation.fieldWithPath("birthday").type(JsonFieldType.STRING).description("1988-02-26")
-                                                )
-                                        )
-                                        .responseFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
-                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
-                                                        PayloadDocumentation.fieldWithPath("data").ignored()
-                                                )
-                                        )
-                                        .requestSchema(Schema.schema("UserCreateDto.Request"))
-                                        .responseSchema(Schema.schema("UserCreateDto.Response"))
-                                        .build()
-                        )
-                ));
+                );
     }
 
     @Test
@@ -123,35 +77,7 @@ class UserControllerTest {
                 .andExpectAll(
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
-                )
-                .andDo(document("/user/userOne/{id}",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        ResourceDocumentation.resource(
-                                new ResourceSnippetParametersBuilder()
-                                        .tag("User")
-                                        .description("회원 정보 조회 API")
-                                        .responseFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
-                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
-                                                        PayloadDocumentation.fieldWithPath("data.id").type(JsonFieldType.NUMBER).description(1),
-                                                        PayloadDocumentation.fieldWithPath("data.loginId").type(JsonFieldType.STRING).description("jyb1624"),
-                                                        PayloadDocumentation.fieldWithPath("data.password").type(JsonFieldType.STRING).description("q1w2e3r4t5"),
-                                                        PayloadDocumentation.fieldWithPath("data.email").type(JsonFieldType.STRING).description("jyb124@test.com"),
-                                                        PayloadDocumentation.fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("Glenn"),
-                                                        PayloadDocumentation.fieldWithPath("data.name").type(JsonFieldType.STRING).description("정인범"),
-                                                        PayloadDocumentation.fieldWithPath("data.userStatus").type(JsonFieldType.STRING).description("ACTIVATED"),
-                                                        PayloadDocumentation.fieldWithPath("data.birthday").type(JsonFieldType.STRING).description("1988-02-26"),
-                                                        PayloadDocumentation.fieldWithPath("data.updateAt").type(JsonFieldType.STRING).description("The timestamp when the data was update"),
-                                                        PayloadDocumentation.fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("The timestamp when the data was created")
-                                                        )
-                                        )
-                                        .requestSchema(Schema.schema("UserCreateDto.Request"))
-                                        .responseSchema(Schema.schema("UserCreateDto.Response"))
-                                        .build()
-                        )
-                ));
+                );
 
     }
 
@@ -176,37 +102,7 @@ class UserControllerTest {
                 .andExpectAll(
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
-                )
-                .andDo(document("/user/updateProfile/{id}",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        ResourceDocumentation.resource(
-                                new ResourceSnippetParametersBuilder()
-                                        .tag("User")
-                                        .description("회원 수정 API")
-                                        .requestFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("loginId").type(JsonFieldType.STRING).description("jyb005222"),
-                                                        PayloadDocumentation.fieldWithPath("password").type(JsonFieldType.STRING).description("q1w2e3r4t5"),
-                                                        PayloadDocumentation.fieldWithPath("email").type(JsonFieldType.STRING).description("jyb1624@test.com"),
-                                                        PayloadDocumentation.fieldWithPath("nickname").type(JsonFieldType.STRING).description("Glenn"),
-                                                        PayloadDocumentation.fieldWithPath("name").type(JsonFieldType.STRING).description("정인범"),
-                                                        PayloadDocumentation.fieldWithPath("userStatus").type(JsonFieldType.STRING).description("ACTIVATED"),
-                                                        PayloadDocumentation.fieldWithPath("birthday").type(JsonFieldType.STRING).description("1988-02-26")
-                                                )
-                                        )
-                                        .responseFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
-                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
-                                                        PayloadDocumentation.fieldWithPath("data").ignored()
-                                                )
-                                        )
-                                        .requestSchema(Schema.schema("UserUpdateDto.Request"))
-                                        .responseSchema(Schema.schema("UserUpdateDto.Response"))
-                                        .build()
-                        )
-                ));
+                );
 
     }
 
@@ -224,26 +120,7 @@ class UserControllerTest {
                 .andExpectAll(
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
-                )
-                .andDo(document("/user/withdraw/{id}",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        ResourceDocumentation.resource(
-                                new ResourceSnippetParametersBuilder()
-                                        .tag("User")
-                                        .description("회원 탈퇴 API")
-                                        .responseFields(
-                                                List.of(
-                                                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING).description("S000"),
-                                                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
-                                                        PayloadDocumentation.fieldWithPath("data").ignored()
-                                                )
-                                        )
-                                        .requestSchema(Schema.schema("UserUpdateDto.Request"))
-                                        .responseSchema(Schema.schema("UserUpdateDto.Response"))
-                                        .build()
-                        )
-                ));
+                );
 
     }
 }
