@@ -9,7 +9,7 @@ plugins { // 어떤 작업 단위를 미리 만들어 놓은 것. 관련된 작�
 }
 
 group = 'com.hwamok'
-version = '0.0.1-SNAPSHOT'
+version = '0.1'
 
 java {
     sourceCompatibility = '17'
@@ -79,7 +79,7 @@ asciidoctor{
 def activeProfile = project.findProperty("spring.profiles.active") ?: "local"
 
 openapi3 {
-    servers = [{ url = getServerUrl(activeProfile)}]
+    servers = [{ url = getServerUrl(activeProfile) }]
     title = "Hwamok API Documentation"
     description = "Hwamok 서버 문서"
     version = "0.0.1"
@@ -104,6 +104,20 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// .zip파일로 만드는 tasks 작업을 추가
+tasks.register("zip", Zip.class) {
+    // 실행 가능한 jar파일 만들어햐함
+    dependsOn("bootJar")
+
+    // zip 파일을 하나 생성해줘야함
+    archiveFileName.set("hwamok.zip")
+
+    //       # .zip 파일을  올려야 한다  .ebextention(optional) Procfile .platform 우리의 jar 파일
+
+    from("build/libs/hwamok-with-tdd-0.1.jar") { into("") }
+    from(".platform") { into(".platform") } // 최상위 폴더 안에 .platform이 생김, "" 알집 파일에 최상의 폴더
+    from("procfiles/Procfile") { into("") }
+}
 
 // aws S3에 올린 다음 호스팅한다.
 // static/docs/index.html 옮기고 Rounting 한다.
