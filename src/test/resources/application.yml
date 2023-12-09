@@ -19,12 +19,12 @@ jwt:
 cloud:
   aws:
     s3:
-      bucket: hwamok3
+      bucket:
     credentials:
-      access-key: AKIA5CD3QQSFBDQOIUXL
-      secret-key: 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
+      access-key:
+      secret-key:
     region:
-      static: ap-northeast-2
+      static:
       auto: false
     stack:
       auto: false
