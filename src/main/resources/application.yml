@@ -16,18 +16,6 @@ spring:
 jwt:
   secretKey: hwamokJwtSecretKey20231102PM1057
 
-cloud:
-  aws:
-    s3:
-      bucket: hwamok3
-    credentials:
-      access-key: AKIA5CD3QQSFBDQOIUXL
-      secret-key: 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
-    region:
-      static: ap-northeast-2
-      auto: false
-    stack:
-      auto: false
 
 
 
