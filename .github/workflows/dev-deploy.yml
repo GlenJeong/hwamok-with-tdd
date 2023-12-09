@@ -37,7 +37,7 @@ jobs:
           echo "PROFILE: $PROFILE"
           
           echo "::set-output name=PROFILE::$(echo $PROFILE)"
-          echo "::set-output name=HWAMOK_ZIP::$(echo HWAMOK_ZIP)"
+          echo "::set-output name=HWAMOK_ZIP::$(echo $HWAMOK_ZIP)"
 
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
