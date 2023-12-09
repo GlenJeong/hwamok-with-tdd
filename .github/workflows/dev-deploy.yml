@@ -38,7 +38,9 @@ jobs:
           
           echo "::set-output name=PROFILE::$(echo $PROFILE)"
           echo "::set-output name=HWAMOK_ZIP::$(echo HWAMOK_ZIP)"
-      
+
+      - name: Run chmod to make gradlew executable
+        run: chmod +x ./gradlew
 
       # ubuntu에 기본으로 깔려있는 mysql 시작
       - name: Set up MySQL
