@@ -59,7 +59,7 @@ jobs:
         uses: gradle/gradle-build-action@main
         with:
           gradle-version: wrapper
-          arguments: test
+          arguments: zip
 
       # Elastic Beanstalk으로 배포를 할 예정
       # EB는 PaaS => Platform as a Service => 관리를 안해도 된다.
