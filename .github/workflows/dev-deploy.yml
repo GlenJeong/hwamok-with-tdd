@@ -1,5 +1,5 @@
-# de
-
+# develop에 push가되는 상황은
+# 배포라고 간주
 
 env:
   DB_PASSWORD: root
@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@main
 
-    # 각종 변수들 셋팅하는 곳
+      # 각종 변수들 세팅
       - name: set env
         id: set-envs
         run: |
@@ -35,15 +35,16 @@ jobs:
           
           echo "HWAMOK_ZIP : $HWAMOK_ZIP"
           echo "PROFILE: $PROFILE"
-  
+          
           echo "::set-output name=PROFILE::$(echo $PROFILE)"
           echo "::set-output name=HWAMOK_ZIP::$(echo HWAMOK_ZIP)"
+      
 
       # ubuntu에 기본으로 깔려있는 mysql 시작
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE hwamok-test;' -uroot -proot
+          mysql -e 'CREATE DATABASE hwamoktest;' -uroot -proot
 
       # jdk 17 세팅
       - name: Set up JDK 17
@@ -53,34 +54,30 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      # gradlew 권한 추가
-      - name: Run chmod to make gradlew executable
-        run: chmod +x ./gradlew
-
-      # gradle test 실행 문서화시 밑에 넣어줘야함
+      # gradle test 실행
       - name: Integration Test
         uses: gradle/gradle-build-action@main
         with:
           gradle-version: wrapper
           arguments: test
 
+      # Elastic Beanstalk으로 배포를 할 예정
+      # EB는 PaaS => Platform as a Service => 관리를 안해도 된다.
+      # .zip 이안에는 .ebextentions(optional) Procfile .platform 우리의 jar파일
 
-      # Elastic Beanstalk으로 배포를 할 예정 => zip 파일을 넣음
-      # EB는 paas => Platform as a Service => 장점 관리를 안해도 된다.
-      # .zip 파일을  올려야 한다  .ebextention(optional) Procfile .platform 우리의 jar 파일
-      # Saas => Service as a Service, 대부분 회사들이 이걸 사용함, 우리 회사 서비스를 다른 회사에 서비스에 연결
+      #.ebextentions(optional) -> eb의 초기 설정 값
+      # Server Timezone -> 전세계공통시간 UTC(default) -> 한국시간 KST(UTC+9) 00자정 -> 15시
+      # 00-{이름}.config --> 01-{이름}.config
 
-      # .ebextention(optional) => eb의 초기 설정값을 넣어줌, 서버 타임존을 넣어줌
-      # Server Timezone => 전세계 공통 시간 UTC(default), 한국 시간 KST(UTC + 9) 00 자정 -> 15시
-      # 00.{이름}.config => 01-{이름}.config
-      # procfiles/Procfile => 실제 우리 jar파일 실행하는 명령어가 들어가 있음
+      # procfiles/Procfile -> 실제로 저희 jar파일 실행하는 명령어가 들어가는 곳
+
+      #.platform/nginx/conf.d -> nginx서버 설정
       # java -jar {name}.jar
-      # .platform -nginx서버 설정
-      # 서버의 맥스 용량, body의 용량
+      # SaaS => Service as a Service
 
-      # s3로 zip 파일 업로드
+      # s3로 zip파일 업로드
       # aws cli 명령어를 통해서 s3에 올린
-      # zip 파일을 eb환경으로 업데이트
+      # zip파일을 eb환경으로 업데이트
 
       - name: move zip
         run: |
