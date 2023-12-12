@@ -15,16 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
-@Profile({"dev", "prod"})
+@Profile({"local", "default"})
 @RequiredArgsConstructor
-public class S3ServiceImpl implements S3Service {
-
-    private final AmazonS3 amazonS3;
-
-    @Value("${s3.bucket}")
-    private String bucket;
+public class LocalS3ServiceImpl implements S3Service {
 
     //@Value
     //외부 설정 파일이나 환경 변수의 값을 읽어와 해당 필드에 주입하는 역할을 수행한다.
@@ -35,29 +31,7 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public List<Pair<String, String>> upload(List<MultipartFile> multipartFiles) {
-        List<Pair<String, String>> pairs = new ArrayList<>();
-
-        multipartFiles.forEach(file -> {
-            String savedFileName = createFileName(file.getOriginalFilename());
-            String fileName = file.getOriginalFilename();
-
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            // ObjectMetadata 객체 생성: S3에 업로드할 파일의 메타데이터를 설정
-            // 파일의 MIME 타입과 크기 등이 포함
-            objectMetadata.setContentType(file.getContentType());
-            objectMetadata.setContentLength(file.getSize());
-
-            try(InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(bucket, savedFileName, inputStream, objectMetadata); //putObject() 메소드가 파일을 저장해주는 메소드
-            }catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "파일 업로드에 실패 하였습니다.");
-            }
-
-            pairs.add(Pair.of(fileName, savedFileName));
-            // 업로드가 성공하면 파일의 원래 이름과 S3에 저장된 이름을 Pair로 묶어서 리스트에 추가, 이 정보는 클라이언트에 반환
-        });
-
-        return pairs;
+        return List.of(Pair.of("originalname", "savedname"));
     }
     // amazonS3.getUrl(bucket, originalFilename).toString();
     // getURl()을 통해 파일이 저장된 URL을 return 해주고, 이 URL로 이동 시 해당 파일이 오픈됨
@@ -65,12 +39,6 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public boolean delete(String savedFileName) {
-        if(amazonS3.doesObjectExist(bucket, savedFileName)) {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, savedFileName));
-
-            return true;
-        }
-
         return false;
     }
 
