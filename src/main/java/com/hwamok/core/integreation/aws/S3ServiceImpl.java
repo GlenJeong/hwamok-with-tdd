@@ -33,6 +33,7 @@ public class S3ServiceImpl implements S3Service {
     //즉, yml파일의 cloud > aws > credentials > access-key 계층구조에 존재하는 속성 값이 accessKey에 주입된다.
     //secretKey와 region의 경우도 동일하다.
 
+
     @Override
     public List<Pair<String, String>> upload(List<MultipartFile> multipartFiles) {
         List<Pair<String, String>> pairs = new ArrayList<>();
@@ -62,6 +63,14 @@ public class S3ServiceImpl implements S3Service {
     // amazonS3.getUrl(bucket, originalFilename).toString();
     // getURl()을 통해 파일이 저장된 URL을 return 해주고, 이 URL로 이동 시 해당 파일이 오픈됨
     // (버킷 정책 변경을 하지 않았으면 파일은 업로드 되지만 해당 URL로 이동 시 accessDenied 됨)
+
+    @Override
+    public Pair<String, String> upload(MultipartFile file) {
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+        multipartFiles.add(file);
+
+        return this.upload(multipartFiles).get(0);
+    }
 
     @Override
     public boolean delete(String savedFileName) {

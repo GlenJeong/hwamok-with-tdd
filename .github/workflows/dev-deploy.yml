@@ -105,3 +105,36 @@ jobs:
 
           aws elasticbeanstalk update-environment --application-name dev-hwamok \
               --environment-name dev-hwamok-env --version-label ${{ steps.set-envs.outputs.HWAMOK_ZIP }}
+
+      # 이 GitHub Actions 워크플로우는 develop 브랜치에 변경 사항이 푸시될 때 실행됩니다. 주요 단계와 해당 기능을 설명하겠습니다:
+      #
+      #환경 변수 설정:
+      #
+      #if [ $GITHUB_REF_NAME = 'develop' ]를 사용하여 브랜치 이름이 'develop'인 경우에만 실행됩니다.
+      #PROFILE을 'dev'로 설정하고, HWAMOK_ZIP을 현재 날짜 및 시간을 기반으로 한 값으로 설정합니다.
+      #echo "::set-output name=PROFILE::$(echo $PROFILE)" 및 echo "::set-output name=HWAMOK_ZIP::$(echo $HWAMOK_ZIP)"를 사용하여 출력 변수를 설정합니다.
+      #MySQL 설정:
+      #
+      #MySQL을 시작하고 'hwamoktest'라는 데이터베이스를 생성합니다.
+      #JDK 및 Gradle 설정:
+      #
+      #JDK 17 및 Gradle을 설정합니다.
+      #Gradle 빌드:
+      #
+      #Gradle을 사용하여 프로젝트를 빌드하고, zip 작업을 실행하여 애플리케이션을 압축합니다.
+      #ZIP 파일 이동:
+      #
+      #빌드된 ZIP 파일을 적절한 디렉토리로 이동시킵니다.
+      #AWS 자격 증명 구성:
+      #
+      #AWS 자격 증명을 구성하기 위해 GitHub Actions에서 제공하는 aws-actions/configure-aws-credentials 액션을 사용합니다.
+      #GitHub Secrets에서 제공한 AWS 액세스 키, 시크릿 키, 및 리전을 사용하여 AWS 자격 증명을 설정합니다.
+      #S3로 업로드:
+      #
+      #빌드된 ZIP 파일을 AWS S3로 업로드합니다.
+      #S3 버킷 이름과 업로드 경로는 하드 코딩되어 있습니다.
+      #Elastic Beanstalk 배포:
+      #
+      #개발 프로필일 때만 실행됩니다.
+      #Elastic Beanstalk 애플리케이션 버전을 생성하고 해당 버전을 사용하여 Elastic Beanstalk 환경을 업데이트합니다.
+      #이 워크플로우는 GitHub Actions를 사용하여 애플리케이션을 빌드하고 AWS Elastic Beanstalk로 배포하는 프로세스를 자동화합니다. 코드가 'develop' 브랜치에 푸시될 때마다 이 작업이 수행됩니다.
