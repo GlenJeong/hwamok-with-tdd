@@ -32,7 +32,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security' // spring security
 
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 

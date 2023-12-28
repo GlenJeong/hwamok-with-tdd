@@ -50,7 +50,6 @@ class UserControllerTest {
 
 
 
-    @Commit
     @Test
     void 회원_가입_성공() throws Exception {
 

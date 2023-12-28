@@ -29,8 +29,8 @@ public class UserServiceImpl implements UserService {
     // 이 메소드는 스프링 빈의 라이프사이클에서 인스턴스가 생성된 후에 호출되기 때문에,
     // 빈이 사용될 준비가 완료된 상태에서 초기화 작업을 수행할 수 있다.
     public void init() throws Exception {
-        if (!userRepository.findByLoginId("jyb0226").isPresent()) {
-            userRepository.save(new User("jyb0226", passwordEncoder.encode("1234"), "jyb0226@gmail.com", "GlennJeong", "InBeom", "ACTIVATED", "1988-02-26"));
+        if (!userRepository.findByLoginId("jyb0120").isPresent()) {
+            userRepository.save(new User("jyb0120", passwordEncoder.encode("1234"), "jyb0120@gmail.com", "GlennJeong", "InBeom", "ACTIVATED", "1988-02-26"));
         }
     }
     // init 메소드가 빈이 초기화될 때 호출되도록 되어 있다.

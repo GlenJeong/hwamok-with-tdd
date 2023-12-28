@@ -3,6 +3,7 @@ package com.hwamok.api;
 import com.epages.restdocs.apispec.ResourceDocumentation;
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import com.epages.restdocs.apispec.Schema;
+import com.hwamok.core.integreation.aws.S3Service;
 import com.hwamok.file.domain.File;
 import com.hwamok.file.domain.FileRepository;
 import com.hwamok.file.service.FileService;
