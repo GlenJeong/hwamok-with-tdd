@@ -19,6 +19,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Profile({"!dev"})
 @RequiredArgsConstructor
 public class S3ServiceImplTest implements S3Service {
 
