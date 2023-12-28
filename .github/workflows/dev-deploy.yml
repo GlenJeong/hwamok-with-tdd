@@ -109,7 +109,7 @@ jobs:
         run: |
           aws s3 cp build/distributions/${{ steps.set-envs.outputs.HWAMOK_ZIP }} s3://elasticbeanstalk-ap-northeast-2-897907197066
 
-      # Elastic Beanstalk에 애플리케이션 배포
+      # Elastic Beanstalk에 애플리케이션
       # 프로파일이 'dev'인 경우에만 수행
       # AWS Elastic Beanstalk에 새로운 애플리케이션 버전을 생성하고,
       # 환경을 업데이트하여 배포를 수행

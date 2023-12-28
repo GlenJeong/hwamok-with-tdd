@@ -34,15 +34,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-@ActiveProfiles("dev")
 @Transactional
 class FileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private FileRepository fileRepository;
 
     @Autowired
     private FileService fileService;
@@ -95,7 +91,7 @@ class FileControllerTest {
                 "imageProfile".getBytes(StandardCharsets.UTF_8) // 파일 내용
         );
 
-        File file = fileRepository.save(new File("originalFileName", "savedFileName"));
+        File file = fileService.upload(mockFile);
 
         mockMvc.perform(delete("/file/{id}", file.getId()))
                 .andExpect(status().isOk())
