@@ -1,9 +1,11 @@
 spring:
+  spring:
+    profiles: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${db.url:jdbc:mysql://localhost:3306/hwamok-tdd}
-    username: ${db.username:root}
-    password: ${db.password:1234}
+    url: jdbc:mysql://localhost:3306/hwamok-tdd
+    username: root
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,13 +18,13 @@ spring:
 cloud:
   aws:
     credentials:
-      access-key: ${aws.access.key:123}
-      secret-key: ${aws.secret.key:123}
+      access-key: AKIA5CD3QQSFBJFUA6N7
+      secret-key: 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
     region:
-      static: ${aws.region:123}
+      static: ap-northeast-2
 
 s3:
-  bucket: ${aws.s3.bucket:123}
+  bucket: hwamok3
 
 jwt:
   secretKey: ${hwamok.jwt.secret.key:123}

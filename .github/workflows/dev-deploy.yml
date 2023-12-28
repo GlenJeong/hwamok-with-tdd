@@ -1,9 +1,10 @@
-# develop에 push가되는 상황은
-# 배포라고 간주
+# 이 코드는 GitHub Actions를 사용하여 Spring Boot 애플리케이션을 Elastic Beanstalk 환경에 배포하는 워크플로우를 정의
+# develop에 push가 되는 상황은 배포라고 간주
 
 env:
   DB_PASSWORD: root
 
+#dev-deploy라는 액션을 정의하고, develop 브랜치에 푸시될 때만 이 액션이 동작하도록 구성
 #action 이름
 name: dev-deploy
 
@@ -13,6 +14,7 @@ on:
     #대상 브랜치
     branches: [ develop ]
 
+# dev-deploy 작업을 정의. 이 작업은 Ubuntu 환경에서 실행
 #실행단위 - 메소드같은 애
 jobs:
   #job이름
@@ -20,8 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+        # GitHub Actions에서 현재 레포지토리의 코드를 가져옴.
 
       # 각종 변수들 세팅
+      # GitHub Actions에서 사용할 환경 변수를 설정.
+      # PROFILE 및 HWAMOK_ZIP을 설정하고 출력으로 전달
       - name: set env
         id: set-envs
         run: |
@@ -43,12 +48,14 @@ jobs:
         run: chmod +x ./gradlew
 
       # ubuntu에 기본으로 깔려있는 mysql 시작
+      # MySQL을 시작하고 개발 환경용 데이터베이스를 생성
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
           mysql -e 'CREATE DATABASE hwamoktest;' -uroot -proot
 
       # jdk 17 세팅
+      # Temurin(AdoptOpenJDK)을 사용하여 JDK 17을 설치
       - name: Set up JDK 17
         uses: actions/setup-java@main
         with:
@@ -57,6 +64,8 @@ jobs:
           cache: 'gradle'
 
       # gradle test 실행
+      # Gradle을 사용하여 프로젝트의 통합 테스트를 수행.
+      # 프로파일은 PROFILE 변수에서 가져옴.
       - name: Integration Test
         uses: gradle/gradle-build-action@main
         with:
@@ -75,16 +84,19 @@ jobs:
 
       #.platform/nginx/conf.d -> nginx서버 설정
       # java -jar {name}.jar
-      # SaaS => Service as a Service
+      # SaaS => software as a Service
 
       # s3로 zip파일 업로드
-      # aws cli 명령어를 통해서 s3에 올린
+      # aws cli 명령어를 통해서 s3에 올림
       # zip파일을 eb환경으로 업데이트
+      # Elastic Beanstalk 배포를 위한 AWS 설정:
+      # .zip 파일을 준비하기 위해 빌드 디렉토리로 파일을 이동
 
       - name: move zip
         run: |
           mv build/distributions/hwamok.zip build/distributions/${{ steps.set-envs.outputs.HWAMOK_ZIP }}
 
+      # AWS Key을 환경 변수를 통해서 사용
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
@@ -92,10 +104,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # 빌드된 .zip 파일을 AWS S3로 업로드
       - name: upload to s3
         run: |
           aws s3 cp build/distributions/${{ steps.set-envs.outputs.HWAMOK_ZIP }} s3://elasticbeanstalk-ap-northeast-2-897907197066
 
+      # Elastic Beanstalk에 애플리케이션 배포
+      # 프로파일이 'dev'인 경우에만 수행
+      # AWS Elastic Beanstalk에 새로운 애플리케이션 버전을 생성하고,
+      # 환경을 업데이트하여 배포를 수행
       - name: Api Deploy To Dev Server
         if: steps.set-envs.outputs.PROFILE == 'dev'
         run: |
@@ -105,3 +122,36 @@ jobs:
 
           aws elasticbeanstalk update-environment --application-name dev-hwamok \
               --environment-name dev-hwamok-env --version-label ${{ steps.set-envs.outputs.HWAMOK_ZIP }}
+
+      # 이 GitHub Actions 워크플로우는 develop 브랜치에 변경 사항이 푸시될 때 실행됩니다. 주요 단계와 해당 기능을 설명하겠습니다:
+      #
+      #환경 변수 설정:
+      #
+      #if [ $GITHUB_REF_NAME = 'develop' ]를 사용하여 브랜치 이름이 'develop'인 경우에만 실행됩니다.
+      #PROFILE을 'dev'로 설정하고, HWAMOK_ZIP을 현재 날짜 및 시간을 기반으로 한 값으로 설정합니다.
+      #echo "::set-output name=PROFILE::$(echo $PROFILE)" 및 echo "::set-output name=HWAMOK_ZIP::$(echo $HWAMOK_ZIP)"를 사용하여 출력 변수를 설정합니다.
+      #MySQL 설정:
+      #
+      #MySQL을 시작하고 'hwamoktest'라는 데이터베이스를 생성합니다.
+      #JDK 및 Gradle 설정:
+      #
+      #JDK 17 및 Gradle을 설정합니다.
+      #Gradle 빌드:
+      #
+      #Gradle을 사용하여 프로젝트를 빌드하고, zip 작업을 실행하여 애플리케이션을 압축합니다.
+      #ZIP 파일 이동:
+      #
+      #빌드된 ZIP 파일을 적절한 디렉토리로 이동시킵니다.
+      #AWS 자격 증명 구성:
+      #
+      #AWS 자격 증명을 구성하기 위해 GitHub Actions에서 제공하는 aws-actions/configure-aws-credentials 액션을 사용합니다.
+      #GitHub Secrets에서 제공한 AWS 액세스 키, 시크릿 키, 및 리전을 사용하여 AWS 자격 증명을 설정합니다.
+      #S3로 업로드:
+      #
+      #빌드된 ZIP 파일을 AWS S3로 업로드합니다.
+      #S3 버킷 이름과 업로드 경로는 하드 코딩되어 있습니다.
+      #Elastic Beanstalk 배포:
+      #
+      #개발 프로필일 때만 실행됩니다.
+      #Elastic Beanstalk 애플리케이션 버전을 생성하고 해당 버전을 사용하여 Elastic Beanstalk 환경을 업데이트합니다.
+      #이 워크플로우는 GitHub Actions를 사용하여 애플리케이션을 빌드하고 AWS Elastic Beanstalk로 배포하는 프로세스를 자동화합니다. 코드가 'develop' 브랜치에 푸시될 때마다 이 작업이 수행됩니다.

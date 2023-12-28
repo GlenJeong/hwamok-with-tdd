@@ -1,17 +1,31 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/hwamok-test
-    username: root
+    url: ${db.url:jdbc:mysql://localhost:3306/hwamoktdd}
+    username: ${db.username:root}
     password: ${db.password:1234}
   jpa:
     hibernate:
-      ddl-auto: create-drop # 한번 만들었다가 삭제함
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 
+cloud:
+  aws:
+    credentials:
+      access-key: ${aws.access.key:123}
+      secret-key: ${aws.secret.key:123}
+    region:
+      static: ${aws.region:123}
+
+s3:
+  bucket: ${aws.s3.bucket:123}
+
 jwt:
-  secretKey: hwamokJwtSecretKey20231102PM1057
+  secretKey: ${hwamok.jwt.secret.key:123}
+  # Elastic Beanstalk > #Environments > #dev-hwamok-env > 구성 > 환경 속성
+  # Elastic Beanstalk 환경 생성하면서 설정해줌
+
