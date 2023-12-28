@@ -34,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
+@ActiveProfiles("dev")
 @Transactional
-@ActiveProfiles("test")
 class FileControllerTest {
 
     @Autowired
@@ -88,9 +88,16 @@ class FileControllerTest {
 
     @Test
     void 파일_삭제_성공() throws Exception {
-        File file = fileRepository.save(new File("JeongInBeom.jpg", "F_1231242323"));
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "imageProfile", // MultipartFile의 필드명과 일치해야 함
+                "imageProfile.jpg",   // 파일 이름
+                "image/jpeg",    // 파일 타입
+                "imageProfile".getBytes(StandardCharsets.UTF_8) // 파일 내용
+        );
 
-        mockMvc.perform(delete("/file/{id}", 6l))
+        File file = fileRepository.save(new File("originalFileName", "savedFileName"));
+
+        mockMvc.perform(delete("/file/{id}", file.getId()))
                 .andExpect(status().isOk())
                 .andExpectAll(jsonPath("code").value("S000"),
                         jsonPath("message").value("success")

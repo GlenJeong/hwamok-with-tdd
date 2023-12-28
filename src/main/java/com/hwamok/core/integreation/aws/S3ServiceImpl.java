@@ -19,7 +19,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Profile({"dev", "prod", "test"})
 @RequiredArgsConstructor
 public class S3ServiceImpl implements S3Service {
 
