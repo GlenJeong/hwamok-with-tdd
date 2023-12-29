@@ -19,9 +19,9 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Profile({"!dev"})
+@Profile({"local", "default"})
 @RequiredArgsConstructor
-public class S3ServiceImplTest implements S3Service {
+public class LocalS3ServiceImpl implements S3Service {
 
     private final AmazonS3 amazonS3;
 
