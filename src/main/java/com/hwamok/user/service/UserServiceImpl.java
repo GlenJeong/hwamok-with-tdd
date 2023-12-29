@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
     //이 메소드를 사용하는 이유는 테스트 환경에서 자동으로 테스트 데이터를 생성하기 위함이거나,
     // 애플리케이션이 처음 실행될 때 초기 데이터를 생성하기 위함일 수 있다.
     // 이는 애플리케이션을 처음 실행할 때 필요한 기본 데이터나 설정을 자동으로 주입하는 등의 용도로 활용된다.
+    //
 
     @Override
     public User create(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception {
