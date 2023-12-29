@@ -16,16 +16,15 @@ spring:
 cloud:
   aws:
     credentials:
-      access-key: AKIA5CD3QQSFA2EMCR5N
-      secret-key: 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
+      access-key: ${aws.access.key:123}
+      secret-key: ${aws.secret.key:123}
     region:
-      static: ap-northeast-2
+      static: ${aws.region:123}
 
 s3:
-  bucket: hwamok3
+  bucket: ${aws.s3.bucket:123}
 
 jwt:
-  secretKey: hwamokJwtSecretKey20231102PM1057
+  secretKey: ${hwamok.jwt.secret.key:123}
   # Elastic Beanstalk > #Environments > #dev-hwamok-env > 구성 > 환경 속성
   # Elastic Beanstalk 환경 생성하면서 설정해줌
-
