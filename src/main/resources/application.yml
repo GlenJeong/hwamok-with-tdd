@@ -26,4 +26,5 @@ s3:
 
 jwt:
   secretKey: ${hwamok.jwt.secret.key:123}
-
+  # Elastic Beanstalk > #Environments > #dev-hwamok-env > 구성 > 환경 속성
+  # Elastic Beanstalk 환경 생성하면서 설정해줌
