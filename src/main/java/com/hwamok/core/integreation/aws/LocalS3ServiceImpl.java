@@ -38,7 +38,6 @@ public class LocalS3ServiceImpl implements S3Service {
 
     @Override
     public List<Pair<String, String>> upload(List<MultipartFile> multipartFiles) {
-        log.info("default 환경입니다.");
         List<Pair<String, String>> pairs = new ArrayList<>();
 
         multipartFiles.forEach(file -> {
@@ -78,7 +77,6 @@ public class LocalS3ServiceImpl implements S3Service {
 
     @Override
     public boolean delete(String savedFileName) {
-        log.info("default 환경입니다.");
         if(amazonS3.doesObjectExist(bucket, savedFileName)) {
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, savedFileName));
 
@@ -93,8 +91,6 @@ public class LocalS3ServiceImpl implements S3Service {
     }
 
     private String getExtension(String name) {
-        log.info("default 환경입니다.");
-
         try {
             return name.substring(name.lastIndexOf("."));
         }catch (StringIndexOutOfBoundsException e) {

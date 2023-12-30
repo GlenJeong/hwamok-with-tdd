@@ -10,6 +10,7 @@ import com.hwamok.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/user")
@@ -50,14 +51,14 @@ public class UserController {
     // loginId, password, email, nickname, name, userStatus, birthday
 
     @PostMapping // 회원 가입
-    public ResponseEntity<ApiResult<?>> signupUser(@RequestBody UserCreateDto.Request request) throws Exception {
-        User user = userService.create(request.getLoginId(), request.getPassword(), request.getEmail(), request.getNickname(), request.getName(), request.getUserStatus(), request.getBirthday());
+    public ResponseEntity<ApiResult<?>> signupUser(@RequestBody UserCreateDto.Request request, @RequestPart MultipartFile profilePicture) throws Exception {
+        User user = userService.create(request.getLoginId(), request.getPassword(), request.getEmail(), request.getNickname(), request.getName(), request.getUserStatus(), request.getBirthday(), profilePicture);
         return Result.created();
     }
 
-    @PatchMapping("/updateProfile/{id}") // 회원 수정
-    public ResponseEntity<ApiResult<?>> updateProfile(@PathVariable Long id, @RequestBody UserUpdateDto.Request dto) throws Exception {
-        User user = userService.updateProfile(id, dto.getLoginId(), dto.getPassword(), dto.getEmail(),dto.getNickname(), dto.getName(), dto.getUserStatus(), dto.getBirthday() );
+    @PostMapping("/updateProfile/{id}") // 회원 수정
+    public ResponseEntity<ApiResult<?>> updateProfile(@PathVariable Long id, @RequestBody UserUpdateDto.Request dto, @RequestPart MultipartFile profilePicture) throws Exception {
+        User user = userService.updateProfile(id, dto.getLoginId(), dto.getPassword(), dto.getEmail(),dto.getNickname(), dto.getName(), dto.getUserStatus(), dto.getBirthday(), profilePicture );
         return Result.ok();
     }
 

@@ -5,15 +5,23 @@ import com.hwamok.api.dto.user.UserCreateDto;
 import com.hwamok.api.dto.user.UserUpdateDto;
 import com.hwamok.user.domain.User;
 import com.hwamok.user.domain.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -48,6 +56,20 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    MockMultipartFile mockFile = null;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        Path path = Paths.get("imageProfile/winter background.png");
+        byte[] fileContent = Files.readAllBytes(path);
+
+        mockFile = new MockMultipartFile(
+                "profilePicture",
+                "winter background.png",
+                "image/png",
+                fileContent
+        );
+    }
 
 
     @Test
@@ -55,7 +77,8 @@ class UserControllerTest {
 
         UserCreateDto.Request request = new UserCreateDto.Request("jyb1624", "q1w2e3r4t5", "jyb1234@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(multipart("/user")
+                        .file(mockFile)
                         // 해당 url로 요청을 한다.
                         .contentType(MediaType.APPLICATION_JSON)
                         // Json 타입으로 지정
@@ -75,7 +98,7 @@ class UserControllerTest {
 
     @Test
     void 회원_단건_정보_조회() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "q1w2e3r4t5", "jyb124@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
+        User user = userRepository.save(new User("jyb1624", "q1w2e3r4t5", "jyb124@test.com", "Glenn", "정인범", "ACTIVATED", "originalFileName", "savedFileName","1988-02-26"));
 
 
         mockMvc.perform(get("/user/userOne/{id}", user.getId()))
@@ -89,11 +112,13 @@ class UserControllerTest {
 
     @Test
     void 회원_수정_성공() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "q1w2e3r4t5", "jyb114@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
 
         UserUpdateDto.Request request = new UserUpdateDto.Request("jyb005222", "q1w2e3r4t5", "jyb1624@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26");
 
-        mockMvc.perform(patch("/user/updateProfile/{id}", user.getId())
+        User user = userRepository.save(new User("jyb1624", "q1w2e3r4t5", "jyb114@test.com", "Glenn", "정인범", "ACTIVATED", "originalFileName", "savedFileName","1988-02-26"));
+
+        mockMvc.perform(multipart("/user/updateProfile/{id}", user.getId())
+                        .file(mockFile)
                         // 해당 url로 요청을 한다.
                         .contentType(MediaType.APPLICATION_JSON)
                         // Json 타입으로 지정
@@ -109,12 +134,11 @@ class UserControllerTest {
                         jsonPath("code").value("S000"),
                         jsonPath("message").value("success")
                 );
-
     }
 
     @Test
     void 회원_탈퇴_성공() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "q1w2e3r4t5", "jyb162324@test.com", "Glenn", "정인범", "ACTIVATED", "1988-02-26"));
+        User user = userRepository.save(new User("jyb1624", "q1w2e3r4t5", "jyb162324@test.com", "Glenn", "정인범", "ACTIVATED", "originalFileName", "savedFileName","1988-02-26"));
 
         mockMvc.perform(delete("/user/withdraw/{id}", user.getId()))
                 // 내용 등록, writeValueAsBytes(변환할 객체): Java 객체를 JSON 형식으로 변환

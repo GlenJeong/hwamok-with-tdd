@@ -2,16 +2,19 @@ package com.hwamok.user.service;
 
 import com.hwamok.core.exception.ExceptionCode;
 import com.hwamok.core.exception.HwamokException;
+import com.hwamok.core.integreation.aws.S3Service;
 import com.hwamok.notice.domain.NoticeRepository;
 import com.hwamok.user.domain.User;
 import com.hwamok.user.domain.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -22,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
 
     @PostConstruct
     // @PostConstruct 어노테이션이 붙은 메소드는 해당 클래스의 인스턴스가 생성된 후에 자동으로 호출되는 메소드
@@ -30,7 +34,7 @@ public class UserServiceImpl implements UserService {
     // 빈이 사용될 준비가 완료된 상태에서 초기화 작업을 수행할 수 있다.
     public void init() throws Exception {
         if (!userRepository.findByLoginId("jyb0120").isPresent()) {
-            userRepository.save(new User("jyb0120", passwordEncoder.encode("1234"), "jyb0120@gmail.com", "GlennJeong", "InBeom", "ACTIVATED", "1988-02-26"));
+            userRepository.save(new User("jyb0120", passwordEncoder.encode("1234"), "jyb0120@gmail.com", "GlennJeong", "InBeom", "ACTIVATED", "originalFileName", "savedFileName","1988-02-26"));
         }
     }
     // init 메소드가 빈이 초기화될 때 호출되도록 되어 있다.
@@ -43,9 +47,11 @@ public class UserServiceImpl implements UserService {
     //
 
     @Override
-    public User create(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception {
+    public User create(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday, MultipartFile profilePicture) throws Exception {
 
-        return userRepository.save(new User(loginId, passwordEncoder.encode(password), email, nickname, name, userStatus, birthday));
+        Pair pair = s3Service.upload(profilePicture);
+
+        return userRepository.save(new User(loginId, passwordEncoder.encode(password), email, nickname, name, userStatus,pair.getFirst().toString(), pair.getSecond().toString(), birthday));
     }
 
     @Override
@@ -54,19 +60,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateProfile(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception {
+    public User updateProfile(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday, MultipartFile profilePicture) throws Exception {
 
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new HwamokException(ExceptionCode.NOT_FOUND_USER));
-        userRepository.save(new User(user.getLoginId(), passwordEncoder.encode(password), email, nickname, name, userStatus, birthday));
+        Pair pair = s3Service.upload(profilePicture);
+
+        userRepository.save(new User(user.getLoginId(), passwordEncoder.encode(password), email, nickname, name, userStatus, pair.getFirst().toString(), pair.getSecond().toString(), birthday));
         return user;
 
     }
 
     @Override
-    public User updateProfile(long id, String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception {
+    public User updateProfile(long id, String loginId, String password, String email, String nickname, String name, String userStatus, String birthday, MultipartFile profilePicture) throws Exception {
+
+        Pair pair = s3Service.upload(profilePicture);
 
         User user = userRepository.findById(id).orElseThrow(() -> new HwamokException(ExceptionCode.NOT_FOUND_USER));
-        user.updateUser(loginId, passwordEncoder.encode(password), email, nickname, name, userStatus, birthday);
+
+        user.updateUser(loginId, passwordEncoder.encode(password), email, nickname, name, userStatus, pair.getFirst().toString(), pair.getSecond().toString(), birthday);
         return user;
 
     }
@@ -75,6 +86,7 @@ public class UserServiceImpl implements UserService {
     public void withdraw(long id) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new HwamokException(ExceptionCode.NOT_FOUND_USER));
+        s3Service.delete(user.getSavedFileName());
         user.withdraw();
         userRepository.save(user);
 
