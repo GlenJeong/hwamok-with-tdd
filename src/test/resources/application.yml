@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${db.url:jdbc:mysql://localhost:3306/hwamoktdd}
+    url: ${db.url:jdbc:mysql://localhost:3306/hwamoktest}
     username: ${db.username:root}
     password: ${db.password:1234}
   jpa:
@@ -13,18 +13,18 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 
+jwt:
+  secretKey: hwamokJwtSecretKey20231102PM1057
+
 cloud:
   aws:
     credentials:
-      access-key: ${aws.access.key:123}
-      secret-key: ${aws.secret.key:123}
+      access-key: AKIA5CD3QQSFA2EMCR5N
+      secret-key: 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
     region:
-      static: ${aws.region:123}
+      static: ap-northeast-2
 
 s3:
-  bucket: ${aws.s3.bucket:123}
-
-jwt:
-  secretKey: ${hwamok.jwt.secret.key:123}
+  bucket: hwamok3
   # Elastic Beanstalk > #Environments > #dev-hwamok-env > 구성 > 환경 속성
   # Elastic Beanstalk 환경 생성하면서 설정해줌
