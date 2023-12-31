@@ -56,7 +56,7 @@ public class UserController {
         return Result.created();
     }
 
-    @PostMapping("/updateProfile/{id}") // 회원 수정
+    @PostMapping("/updateProfile/{id}")
     public ResponseEntity<ApiResult<?>> updateProfile(@PathVariable Long id, @RequestBody UserUpdateDto.Request dto, @RequestPart MultipartFile profilePicture) throws Exception {
         User user = userService.updateProfile(id, dto.getLoginId(), dto.getPassword(), dto.getEmail(),dto.getNickname(), dto.getName(), dto.getUserStatus(), dto.getBirthday(), profilePicture );
         return Result.ok();
