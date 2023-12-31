@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### main application yml
+src/main/resources/application.yml
+
+### test application yml
+src/test/resources/application.yml
