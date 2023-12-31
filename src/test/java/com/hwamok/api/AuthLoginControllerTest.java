@@ -151,14 +151,5 @@ class AuthLoginControllerTest {
                         jsonPath("data.accessToken").isNotEmpty(),
                         jsonPath("data.refreshToken").isNotEmpty()
                 );
-
-//        resultActions.andDo(
-//                        DocsUtil.createDocs(
-//                                "Auth2",
-//                                "Auth/login2",
-//                                "로그인 자동화 API",
-//                                resultActions
-//                                )
-//                );
     }
 }
