@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface S3Service {
 
-    public Pair<String, String> upload(MultipartFile multipartFiles);
-
     public List<Pair<String, String>> upload(List<MultipartFile> multipartFiles);
 
     public boolean delete(String savedFileName);

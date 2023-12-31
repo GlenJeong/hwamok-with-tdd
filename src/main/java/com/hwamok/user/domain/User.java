@@ -46,12 +46,6 @@ public class User {
     @Column(length = 10)
     private String name;
 
-    @Column(length = 100)
-    private String originalFileName;
-
-    @Column(length = 100)
-    private String savedFileName;
-
     @Column
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
@@ -65,7 +59,7 @@ public class User {
     @CreationTimestamp
     private Instant createdAt=Instant.now(); // now() 현재 시간으로 반환
 
-    public User(String loginId, String password, String email, String nickname, String name, String userStatus, String originalFileName, String savedFileName, String birthday) throws Exception {
+    public User(String loginId, String password, String email, String nickname, String name, String userStatus, String birthday) throws Exception {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -81,8 +75,6 @@ public class User {
         this.nickname = nickname;
         this.name = name;
         this.userStatus = UserStatus.of(userStatus); // Active or InActive
-        this.originalFileName = originalFileName;
-        this.savedFileName = savedFileName;
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = format.parse(birthday);
@@ -90,7 +82,7 @@ public class User {
         this.birthday = date;
     }
 
-    public void updateUser(String loginId, String password, String email, String nickname, String name,String userStatus, String originalFileName, String savedFileName, String birthday) throws Exception {
+    public void updateUser(String loginId, String password, String email, String nickname, String name,String userStatus, String birthday) throws Exception {
 
         Preconditions.require(Strings.isNotBlank(loginId));
         Preconditions.require(Strings.isNotBlank(password));
@@ -110,8 +102,6 @@ public class User {
         this.nickname = nickname;
         this.name = name;
         this.userStatus = UserStatus.of(userStatus); // Active or InActive
-        this.originalFileName = originalFileName;
-        this.savedFileName = savedFileName;
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = format.parse(birthday);
