@@ -87,9 +87,9 @@ class AuthLoginControllerTest {
 
 
 
-        User user = userRepository.save(userRepository.save(UserFixture.createUser("jiy88226", passwordEncoder.encode("q1w2e3r4t5"))));
+        User user = userRepository.save(UserFixture.createUser("jiy88226", passwordEncoder.encode("q1w2e3r4t5")));
 
-        LoginDto.Request dto = new LoginDto.Request("jiy88226","q1w2e3r4t5");
+        LoginDto.Request dto = new LoginDto.Request(user.getLoginId(),"q1w2e3r4t5");
 
         mockMvc.perform(post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,9 +136,9 @@ class AuthLoginControllerTest {
 
     @Test
     void 자동화_테스트() throws Exception {
-        userRepository.save(userRepository.save(UserFixture.createUser("jyb0226", passwordEncoder.encode("a1s2d3f4g5"))));
+        User user = userRepository.save(UserFixture.createUser("jyb0226", passwordEncoder.encode("a1s2d3f4g5")));
 
-        LoginDto.Request dto = new LoginDto.Request("jyb0226","a1s2d3f4g5");
+        LoginDto.Request dto = new LoginDto.Request(user.getLoginId(), "a1s2d3f4g5");
 
         ResultActions resultActions = mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
