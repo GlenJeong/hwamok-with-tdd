@@ -13,7 +13,5 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 
-jwt:
-  secretKey: hwamokJwtSecretKey20231102PM1057
   # Elastic Beanstalk > #Environments > #dev-hwamok-env > 구성 > 환경 속성
   # Elastic Beanstalk 환경 생성하면서 설정해줌
