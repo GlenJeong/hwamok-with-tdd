@@ -1,5 +1,6 @@
 package com.hwamok.api;
 
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.epages.restdocs.apispec.ResourceDocumentation;
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import com.epages.restdocs.apispec.Schema;
@@ -65,13 +66,12 @@ class AuthLoginControllerTest {
                         jsonPath("data.accessToken").isNotEmpty(),
                         jsonPath("data.refreshToken").isNotEmpty()
                 )
-                .andDo(document("/auth/login",
+                .andDo(MockMvcRestDocumentationWrapper.document("유저로그인 API",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         ResourceDocumentation.resource(
                                 new ResourceSnippetParametersBuilder()
                                         .tag("Auth")
-                                        .description("로그인 API")
                                         .requestFields(
                                                 List.of(
                                                         PayloadDocumentation.fieldWithPath("loginId").type(JsonFieldType.STRING).description("jiy88226"),
