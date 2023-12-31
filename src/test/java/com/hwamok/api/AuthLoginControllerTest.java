@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Transactional
-class AuthControllerTest {
+class AuthLoginControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -87,13 +87,13 @@ class AuthControllerTest {
 
 
 
-        User user = userRepository.save(userRepository.save(UserFixture.createUser("jiy88226", passwordEncoder.encode("q1w2e3r4t5"))));
+        User user = userRepository.save(UserFixture.createUser("jiy88226", passwordEncoder.encode("q1w2e3r4t5")));
 
-        LoginDto.Request dto = new LoginDto.Request("jiy88226","q1w2e3r4t5");
+        LoginDto.Request dto = new LoginDto.Request(user.getLoginId(),"q1w2e3r4t5");
 
         mockMvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(dto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpectAll(
@@ -102,7 +102,7 @@ class AuthControllerTest {
                         jsonPath("data.accessToken").isNotEmpty(),
                         jsonPath("data.refreshToken").isNotEmpty()
                 )
-                .andDo(document("/auth/login",
+                .andDo(document("유저 로그인 API",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         ResourceDocumentation.resource(
@@ -113,7 +113,7 @@ class AuthControllerTest {
                                                 List.of(
                                                         PayloadDocumentation.fieldWithPath("loginId").type(JsonFieldType.STRING).description("jiy88226"),
                                                         PayloadDocumentation.fieldWithPath("password").type(JsonFieldType.STRING).description("q1w2e3r4t5")
-                                                        )
+                                                )
                                         )
                                         .responseFields(
                                                 List.of(
@@ -121,7 +121,7 @@ class AuthControllerTest {
                                                         PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING).description("success"),
                                                         PayloadDocumentation.fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("access Token"),
                                                         PayloadDocumentation.fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("refresh Token")
-                                                        )
+                                                )
                                         )
                                         .requestSchema(Schema.schema("LoginDto.Request"))
                                         .responseSchema(Schema.schema("LoginDto.Response"))
@@ -136,13 +136,13 @@ class AuthControllerTest {
 
     @Test
     void 자동화_테스트() throws Exception {
-        userRepository.save(userRepository.save(UserFixture.createUser("jyb0226", passwordEncoder.encode("a1s2d3f4g5"))));
+        User user = userRepository.save(UserFixture.createUser("jyb0226", passwordEncoder.encode("a1s2d3f4g5")));
 
-        LoginDto.Request dto = new LoginDto.Request("jyb0226","a1s2d3f4g5");
+        LoginDto.Request dto = new LoginDto.Request(user.getLoginId(), "a1s2d3f4g5");
 
         ResultActions resultActions = mockMvc.perform(post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(dto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(dto)));
         resultActions.andDo(print())
                 .andExpect(status().isOk())
                 .andExpectAll(
@@ -151,14 +151,5 @@ class AuthControllerTest {
                         jsonPath("data.accessToken").isNotEmpty(),
                         jsonPath("data.refreshToken").isNotEmpty()
                 );
-
-//        resultActions.andDo(
-//                        DocsUtil.createDocs(
-//                                "Auth2",
-//                                "Auth/login2",
-//                                "로그인 자동화 API",
-//                                resultActions
-//                                )
-//                );
     }
 }
