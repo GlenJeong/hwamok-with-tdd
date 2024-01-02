@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -16,16 +15,12 @@ import java.util.Date;
 import static com.hwamok.core.Preconditions.notNull;
 
 @Service
-@Profile({"dev", "prod"})
+@Profile({"default", "local"})
 @RequiredArgsConstructor
-public class JwtServiceImpl implements JwtService {
+public class LocalJwtServiceImpl implements JwtService {
 
     private static final long EXPIRE_MINUTES = 30_000; // 30초
     private static final long EXPIRE_DAYS = 86_400_000; // 24시간
-
-    @Value("${jwt.secretKey}")
-    private String secretKey;
-
 
     @Override
     public String issue(long userId, JwtType type) { //issue: 사용자 ID 및 토큰 타입을 받아 JWT 토큰을 생성합니다.
@@ -100,7 +95,7 @@ public class JwtServiceImpl implements JwtService {
     // private 시작하는 메서드는 맨 밑에 추가한다.
     private SecretKey generateSecretKey() { // 문자열을 바이트 배열로 변환하는 부분
         // 이 바이트 배열을 기반으로 HMAC-SHA 키를 생성하고 반환
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+        return Keys.hmacShaKeyFor("hwamokJwtLocalSecretKey20240102PM1944".getBytes());
         // secretKey.getBytes() 문자열 형태의 시크릿 키를 바이트 배열로 반환
         // 변환된 바이트 배열을 사용하여 HMAC SHA 알고리즘에 기반한 시크릿 키를 생성
       // HMAC (Hash-based Message Authentication Code) 알고리즘을 사용하여 시크릿 키를 생성하는 역할

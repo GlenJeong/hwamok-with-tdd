@@ -5,6 +5,7 @@ import com.hwamok.api.dto.user.UserCreateDto;
 import com.hwamok.api.dto.user.UserUpdateDto;
 import com.hwamok.user.domain.User;
 import com.hwamok.user.domain.UserRepository;
+import com.hwamok.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,7 +55,9 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    MockMultipartFile mockFile = null;
+    @Autowired
+    private UserService userService;
+    MockMultipartFile mockFile;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -70,7 +71,6 @@ class UserControllerTest {
                 fileContent
         );
     }
-
 
     @Test
     void 회원_가입_성공() throws Exception {
@@ -138,7 +138,12 @@ class UserControllerTest {
 
     @Test
     void 회원_탈퇴_성공() throws Exception {
-        User user = userRepository.save(new User("jyb1624", "q1w2e3r4t5", "jyb162324@test.com", "Glenn", "정인범", "ACTIVATED", "originalFileName", "savedFileName","1988-02-26"));
+//        String name = mockFile.getOriginalFilename().substring(mockFile.getOriginalFilename().lastIndexOf("."));
+//        String savedFileName = "F_" + System.currentTimeMillis() + name;
+//
+//        User user = userRepository.save(new User("jyb0226", "q1w2e3r4t5", "jyb0226@test.com", "Glenn", "정인범", "ACTIVATED", mockFile.getOriginalFilename(), savedFileName,"1988-02-26"));
+
+        User user = userService.create("jyb0209", "1234", "jyb0209@test.com", "Jane", "전현정", "ACTIVATED", "1992-01-20", mockFile);
 
         mockMvc.perform(delete("/user/withdraw/{id}", user.getId()))
                 // 내용 등록, writeValueAsBytes(변환할 객체): Java 객체를 JSON 형식으로 변환
