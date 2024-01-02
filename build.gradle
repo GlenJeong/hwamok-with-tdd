@@ -103,6 +103,7 @@ tasks.named('generateSwaggerUIConvert') {
     dependsOn 'openapi3'
 }
 
+// 폴더 복사하기
 tasks.register("moveSwaggerFiles", Copy) {
     dependsOn("generateSwaggerUIConvert")
 
