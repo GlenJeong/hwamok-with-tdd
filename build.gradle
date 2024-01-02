@@ -101,18 +101,19 @@ swaggerSources {
 
 tasks.named('generateSwaggerUIConvert') {
     dependsOn 'openapi3'
+    dependsOn 'moveSwaggerFiles'
 }
 
 // 폴더 복사하기
-tasks.register("moveSwaggerFiles", Copy) {
-    dependsOn("generateSwaggerUIConvert")
+//task copyResources(type: Copy) {
+//    from file('build/swagger-ui-convert')
+//    into file('build/resources/main/static/docs/')
+//}
 
-    doLast {
-        copy {
-            from("$buildDir/swagger-ui-convert")
-            into("$buildDir/resources/main/static/docs/")
-        }
-    }
+task moveSwaggerFiles(type: Copy) {
+    dependsOn("generateSwaggerUIConvert")
+    layout.buildDirectory.dir("build/swagger-ui-convert")
+    layout.buildDirectory.dir("build/resources/main/static/docs/")
 }
 
 tasks.named('test') {
