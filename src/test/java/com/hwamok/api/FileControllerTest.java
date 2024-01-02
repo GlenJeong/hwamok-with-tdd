@@ -5,6 +5,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import com.epages.restdocs.apispec.Schema;
 import com.hwamok.file.domain.File;
 import com.hwamok.file.service.FileService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -17,7 +18,10 @@ import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
@@ -41,15 +45,23 @@ class FileControllerTest {
     @Autowired
     private FileService fileService;
 
+    MockMultipartFile mockFile;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        Path path = Paths.get("imageProfile/winter background.png");
+        byte[] fileContent = Files.readAllBytes(path);
+
+        mockFile = new MockMultipartFile(
+                "imageProfile",
+                "winter background.png",
+                "image/png",
+                fileContent
+        );
+    }
+
     @Test
     void 파일_생성_성공() throws Exception {
-        // MockMultipartFile 생성
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "imageProfile", // MultipartFile의 필드명과 일치해야 함
-                "imageProfile.jpg",   // 파일 이름
-                "image/jpeg",    // 파일 타입
-                "imageProfile".getBytes(StandardCharsets.UTF_8) // 파일 내용
-        );
 
         mockMvc.perform(multipart("/file")
                         .file(mockFile)
@@ -79,16 +91,8 @@ class FileControllerTest {
                         )
                 ));
         }
-
     @Test
     void 파일_삭제_성공() throws Exception {
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "imageProfile", // MultipartFile의 필드명과 일치해야 함
-                "imageProfile.jpg",   // 파일 이름
-                "image/jpeg",    // 파일 타입
-                "imageProfile".getBytes(StandardCharsets.UTF_8) // 파일 내용
-        );
-
         File file = fileService.upload(mockFile);
 
         mockMvc.perform(delete("/file/{id}", file.getId()))

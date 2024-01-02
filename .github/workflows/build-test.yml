@@ -43,10 +43,6 @@ jobs:
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 
-      # 추가: secrets 적용
-      - name: Apply Secrets
-        run: echo ${{secrets.APPLICATION_SECRET}} | base64 --decode >> ./src/test/resources/application.yml
-
       # gradle test 실행
       - name: Integration Test
         uses: gradle/gradle-build-action@main
