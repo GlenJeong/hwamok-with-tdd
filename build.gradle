@@ -108,7 +108,10 @@ tasks.register("moveSwaggerFiles", Copy) {
 
     doLast {
         copy {
+            println "Copying from: $buildDir/swagger-ui-convert"
             from("$buildDir/swagger-ui-convert")
+
+            println "Copying into: $buildDir/resources/main/static/docs/"
             into("$buildDir/resources/main/static/docs/")
         }
     }
