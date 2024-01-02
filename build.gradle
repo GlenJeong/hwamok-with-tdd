@@ -119,12 +119,6 @@ task moveSwaggerFiles(type: Copy) {
     from("$buildDir/swagger-ui-convert")
     into("$buildDir/resources/main/static/docs/")
 }
-tasks.named("bootJar") {
-    enabled = true
-    dependsOn("moveSwaggerFiles")
-    archiveFileName.set("hwamok.jar")
-}
-
 
 tasks.named('test') {
     useJUnitPlatform()
