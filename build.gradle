@@ -86,6 +86,7 @@ openapi3 {
     description = "Hwamok 서버 문서"
     version = "0.0.1"
     format = "json"
+
 }
 
 swaggerSources {
@@ -100,6 +101,18 @@ swaggerSources {
 
 tasks.named('generateSwaggerUIConvert') {
     dependsOn 'openapi3'
+}
+
+// 폴더 복사하기
+tasks.register("moveSwaggerFiles", Copy) {
+    dependsOn("generateSwaggerUIConvert")
+
+    doLast {
+        copy {
+            from("$buildDir/swagger-ui-convert")
+            into("$buildDir/resources/main/static/docs/")
+        }
+    }
 }
 
 tasks.named('test') {
