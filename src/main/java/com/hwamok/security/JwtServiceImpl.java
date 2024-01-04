@@ -16,7 +16,7 @@ import java.util.Date;
 import static com.hwamok.core.Preconditions.notNull;
 
 @Service
-@Profile({"dev", "prod"})
+//@Profile({"dev", "prod"})
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
