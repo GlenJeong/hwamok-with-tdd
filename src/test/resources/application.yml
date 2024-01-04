@@ -25,6 +25,6 @@ s3:
   bucket: ${aws.s3.bucket:123}
 
 jwt:
-  secretKey: ${hwamok.jwt.secret.key:123}
+  secretKey: hwamokJwtLocalSecretKey20240102PM1651
   # Elastic Beanstalk > #Environments > #dev-hwamok-env > 구성 > 환경 속성
   # Elastic Beanstalk 환경 생성하면서 설정해줌
